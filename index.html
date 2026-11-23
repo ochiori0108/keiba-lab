@@ -2141,13 +2141,27 @@
   });
 
   let parsedPasteHorses = [];
+  let parsedPasteTimestamps = null;
 
   function parsePasteText() {
     const raw = document.getElementById("pasteInput").value;
     const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
     const results = [];
+    let detectedTimes = null;
 
     for (const line of lines) {
+      if (/^#\s*TIME\b/i.test(line)) {
+        const timeTokens = line
+          .replace(/^#\s*TIME\b/i, "")
+          .trim()
+          .split(/\s+/)
+          .filter(Boolean);
+        if (timeTokens.length >= 2) {
+          detectedTimes = timeTokens;
+        }
+        continue;
+      }
+
       const parts = line.replace(/\t+/g, " ").split(/\s+/).filter(Boolean);
       if (parts.length < 3) continue;
 
@@ -2180,6 +2194,7 @@
     }
 
     parsedPasteHorses = results;
+    parsedPasteTimestamps = detectedTimes;
     const preview = document.getElementById("pastePreview");
     const applyBtn = document.getElementById("btnApplyPaste");
 
@@ -2187,7 +2202,8 @@
       preview.textContent = "読み取れる行がまだありません（「1 馬名 3.5」のような形で貼ってください）。";
       applyBtn.disabled = true;
     } else {
-      preview.innerHTML = `<strong>${results.length}頭を認識：</strong>` +
+      const timeInfo = detectedTimes ? `／時刻：${detectedTimes.join(" → ")}` : "";
+      preview.innerHTML = `<strong>${results.length}頭を認識${escapeHtml(timeInfo)}：</strong>` +
         results.map(r => `${r.num}.${escapeHtml(r.name)}(${r.odds.toFixed(1)}倍${r.oddsHistory.length > 1 ? "・推移" + r.oddsHistory.length + "時点" : ""})`).join(" / ");
       applyBtn.disabled = false;
     }
