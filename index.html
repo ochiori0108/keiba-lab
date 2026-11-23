@@ -1,0 +1,3954 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>TRICK LOGIC｜競馬観測LAB（やさしいライト版）</title>
+  <style>
+    /* =========================================================================
+       1. DESIGN TOKENS & UNIVERSAL DESIGN GOTHIC TYPOGRAPHY
+       - Strictly enforces BIZ UDPGothic / Hiragino Sans / Meiryo / Noto Sans JP
+       - Zero serif, Mincho, Yu Gothic, MS PGothic, system-ui, or monospace
+       ========================================================================= */
+    :root {
+      --font-gothic: "BIZ UDPGothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif;
+
+      --bg-page: #F6F5F0;
+      --bg-card: #FFFFFF;
+      --bg-soft: #F1EFE8;
+      --border-warm: #E2E0D8;
+      --border-strong: #C9C6BA;
+
+      --text-main: #1E293B;
+      --text-sub: #526071;
+
+      --navy: #1E3A5F;
+      --navy-hover: #162C49;
+      --navy-bg: #EBF1F7;
+      --navy-border: #BDD0E4;
+
+      --green: #1F6E4A;
+      --green-hover: #175438;
+      --green-bg: #E5F4EC;
+      --green-border: #9AD2B5;
+
+      --burgundy: #9B2C2C;
+      --burgundy-bg: #FCEAEA;
+      --burgundy-border: #E5B0B0;
+
+      --amber: #B45309;
+      --amber-bg: #FEF5E6;
+      --amber-border: #F2CE96;
+
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --shadow-card: 0 2px 6px rgba(30, 41, 59, 0.05), 0 1px 2px rgba(30, 41, 59, 0.04);
+      --shadow-modal: 0 14px 36px rgba(30, 41, 59, 0.20);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      font-family: var(--font-gothic);
+      font-size: 16px;
+      line-height: 1.55;
+      letter-spacing: 0.01em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    button, input, select, textarea, optgroup, svg, text, table {
+      font-family: var(--font-gothic);
+      letter-spacing: 0.01em;
+    }
+
+    body {
+      padding-bottom: 96px;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding-bottom: 44px;
+      }
+    }
+
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* =========================================================================
+       2. BUTTONS, HELP "?" TRIGGERS & FORM INPUTS (Min 44px Touch Targets)
+       ========================================================================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      min-height: 44px;
+      padding: 9px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.25;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-strong);
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.08s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      background-color: var(--bg-soft);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-navy {
+      background-color: var(--navy);
+      border-color: var(--navy);
+      color: #FFFFFF;
+    }
+
+    .btn-navy:hover:not(:disabled) {
+      background-color: var(--navy-hover);
+      border-color: var(--navy-hover);
+    }
+
+    .btn-navy-soft {
+      background-color: var(--navy-bg);
+      border-color: var(--navy-border);
+      color: var(--navy);
+    }
+
+    .btn-navy-soft:hover:not(:disabled) {
+      background-color: #DDE8F3;
+    }
+
+    .btn-green {
+      background-color: var(--green);
+      border-color: var(--green);
+      color: #FFFFFF;
+    }
+
+    .btn-green:hover:not(:disabled) {
+      background-color: var(--green-hover);
+      border-color: var(--green-hover);
+    }
+
+    .btn-amber-soft {
+      background-color: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber);
+    }
+
+    .btn-amber-soft:hover:not(:disabled) {
+      background-color: #FCE9CA;
+    }
+
+    .btn-danger-soft {
+      background-color: var(--burgundy-bg);
+      border-color: var(--burgundy-border);
+      color: var(--burgundy);
+    }
+
+    .btn-danger-soft:hover:not(:disabled) {
+      background-color: #F7D8D8;
+    }
+
+    .help-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      min-width: 30px;
+      min-height: 30px;
+      padding: 0;
+      border-radius: 999px;
+      border: 1.5px solid var(--navy-border);
+      background-color: var(--navy-bg);
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      vertical-align: middle;
+      transition: background-color 0.15s ease, color 0.15s ease, transform 0.08s ease;
+    }
+
+    .help-btn:hover {
+      background-color: var(--navy);
+      color: #FFFFFF;
+    }
+
+    .help-btn:active {
+      transform: scale(0.93);
+    }
+
+    .input-field {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.15);
+    }
+
+    /* =========================================================================
+       3. TOP STICKY HEADER & DESKTOP TAB BAR
+       ========================================================================= */
+    .top-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: var(--bg-card);
+      border-bottom: 1.5px solid var(--border-warm);
+      box-shadow: 0 2px 8px rgba(30, 41, 59, 0.05);
+    }
+
+    .header-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .brand-group {
+      min-width: 0;
+      flex: 1 1 220px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .brand-badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background-color: var(--navy-bg);
+      color: var(--navy);
+      border: 1px solid var(--navy-border);
+    }
+
+    .race-subtitle {
+      margin: 3px 0 0 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .header-actions .btn {
+      padding: 8px 11px;
+      font-size: 14px;
+    }
+
+    /* Desktop 4-Tab Bar */
+    .desktop-tabs {
+      display: none;
+      max-width: 980px;
+      margin: 14px auto 0;
+      padding: 0 14px;
+    }
+
+    @media (min-width: 768px) {
+      .desktop-tabs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+      }
+    }
+
+    .d-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 50px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-warm);
+      background-color: var(--bg-card);
+      color: var(--text-sub);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-card);
+      transition: all 0.15s ease;
+    }
+
+    .d-tab-btn:hover {
+      border-color: var(--navy-border);
+      color: var(--navy);
+    }
+
+    .d-tab-btn.active {
+      background-color: var(--navy);
+      border-color: var(--navy);
+      color: #FFFFFF;
+    }
+
+    .tab-count-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 6px;
+      border-radius: 999px;
+      background-color: var(--green);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* =========================================================================
+       4. MAIN LAYOUT & SECTION CARDS
+       ========================================================================= */
+    .main-container {
+      max-width: 980px;
+      margin: 14px auto 0;
+      padding: 0 14px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .section-card {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 16px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .section-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .section-desc {
+      margin: 0 0 14px 0;
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    /* =========================================================================
+       5. TAB 1: STICKY SUMMARY BAR & HORSE CARDS
+       ========================================================================= */
+    .prob-subbar {
+      position: sticky;
+      top: 66px;
+      z-index: 30;
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 12px rgba(30, 41, 59, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .prob-total-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .prob-total-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .prob-total-num {
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .prob-ok {
+      color: var(--green);
+    }
+
+    .prob-warn {
+      color: var(--amber);
+    }
+
+    .prob-status-pill {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    .pill-ok {
+      background-color: var(--green-bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+
+    .pill-warn {
+      background-color: var(--amber-bg);
+      color: var(--amber);
+      border: 1px solid var(--amber-border);
+    }
+
+    .prob-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .prob-actions .btn {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+
+    .horse-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .horse-card {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .horse-card.card-undervalued {
+      border-color: var(--green-border);
+      background-color: #FAFDFB;
+    }
+
+    .horse-card.card-overvalued {
+      border-color: var(--burgundy-border);
+      background-color: #FDFBFB;
+    }
+
+    .horse-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-warm);
+      margin-bottom: 12px;
+    }
+
+    .horse-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1 1 200px;
+    }
+
+    .horse-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      flex-shrink: 0;
+      border: 1px solid rgba(30, 41, 59, 0.16);
+    }
+
+    .waku-1 { background-color: #FFFFFF; color: #1E293B; border: 1.5px solid #94A3B8; }
+    .waku-2 { background-color: #334155; color: #FFFFFF; }
+    .waku-3 { background-color: #B91C1C; color: #FFFFFF; }
+    .waku-4 { background-color: #1D4ED8; color: #FFFFFF; }
+    .waku-5 { background-color: #EAB308; color: #1E293B; }
+    .waku-6 { background-color: #1F6E4A; color: #FFFFFF; }
+    .waku-7 { background-color: #D97706; color: #FFFFFF; }
+    .waku-8 { background-color: #BE185D; color: #FFFFFF; }
+
+    .horse-name {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      word-break: keep-all;
+    }
+
+    .horse-top-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .mark-select {
+      min-height: 44px;
+      min-width: 72px;
+      padding: 6px 10px;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--navy);
+      background-color: var(--bg-soft);
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+    }
+
+    .ev-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .ev-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .ev-green {
+      background-color: var(--green-bg);
+      color: var(--green);
+      border: 1px solid var(--green-border);
+    }
+
+    .ev-red {
+      background-color: var(--burgundy-bg);
+      color: var(--burgundy);
+      border: 1px solid var(--burgundy-border);
+    }
+
+    .ev-neutral {
+      background-color: var(--bg-soft);
+      color: var(--text-main);
+      border: 1px solid var(--border-strong);
+    }
+
+    .horse-middle {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .horse-middle {
+        grid-template-columns: 1fr 1fr 1.35fr;
+        align-items: end;
+      }
+    }
+
+    .field-box {
+      background-color: var(--bg-soft);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+    }
+
+    .field-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+    }
+
+    .odds-input-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .odds-input {
+      width: 98px;
+      min-height: 44px;
+      padding: 6px 10px;
+      font-size: 19px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+
+    .market-rate-val {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .gap-sub {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stepper-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      min-width: 48px;
+      min-height: 44px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--navy-border);
+      background-color: #FFFFFF;
+      color: var(--navy);
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-btn:hover {
+      background-color: var(--navy-bg);
+    }
+
+    .step-btn:active {
+      transform: scale(0.95);
+    }
+
+    .custom-prob-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 82px;
+    }
+
+    .custom-prob-input {
+      width: 100%;
+      min-height: 44px;
+      padding: 6px 26px 6px 8px;
+      font-size: 20px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--navy);
+      background-color: #FFFFFF;
+      border: 2px solid var(--navy);
+      border-radius: var(--radius-sm);
+    }
+
+    .custom-prob-unit {
+      position: absolute;
+      right: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+      pointer-events: none;
+    }
+
+    .tags-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .tag-chip {
+      min-height: 36px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1.5px solid var(--border-warm);
+      background-color: #FFFFFF;
+      color: var(--text-sub);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s ease;
+    }
+
+    .tag-chip.active {
+      background-color: var(--navy-bg);
+      border-color: var(--navy);
+      color: var(--navy);
+    }
+
+    .tag-chip.active[data-tag="有利枠"],
+    .tag-chip.active[data-tag="同舞台・着差◎"] {
+      background-color: var(--green-bg);
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .tag-chip.active[data-tag="直前反発+"] {
+      background-color: var(--amber-bg);
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .tag-chip.active[data-tag="過剰人気(削)"] {
+      background-color: var(--burgundy-bg);
+      border-color: var(--burgundy);
+      color: var(--burgundy);
+    }
+
+    /* =========================================================================
+       6. TAB 2: SVG DISTORTION RADAR & VERDICT CARD
+       ========================================================================= */
+    .chart-frame {
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 12px 10px 10px;
+    }
+
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .verdict-card {
+      margin-top: 16px;
+      background-color: var(--bg-soft);
+      border: 1.5px solid var(--navy-border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+
+    .verdict-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .verdict-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (min-width: 560px) {
+      .verdict-stats {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .v-stat-box {
+      background-color: #FFFFFF;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      text-align: center;
+    }
+
+    .v-stat-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 3px;
+    }
+
+    .v-stat-val {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .verdict-message {
+      background-color: #FFFFFF;
+      border-left: 5px solid var(--navy);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    /* =========================================================================
+       7. TAB 3: BET TYPE PILLS, FILTER PANEL, KPI & DUTCHING ALLOCATION
+       ========================================================================= */
+    .bet-type-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .bet-pill {
+      min-height: 44px;
+      padding: 6px 4px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-warm);
+      background-color: var(--bg-soft);
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .bet-pill.active {
+      background-color: var(--navy);
+      border-color: var(--navy);
+      color: #FFFFFF;
+    }
+
+    .bets-filter-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    @media (min-width: 720px) {
+      .bets-filter-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .control-group {
+      background-color: var(--bg-soft);
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+
+    .control-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .control-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .control-val {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .slider-stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-input {
+      flex: 1;
+      min-width: 60px;
+      height: 36px;
+      accent-color: var(--navy);
+      cursor: pointer;
+    }
+
+    .compact-num-input {
+      width: 96px;
+      min-height: 44px;
+      padding: 6px 8px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    @media (min-width: 600px) {
+      .kpi-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .kpi-card {
+      background-color: var(--bg-soft);
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .kpi-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .kpi-val {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* Desktop Allocation Table */
+    .bets-table-wrap {
+      display: none;
+      width: 100%;
+      overflow-x: auto;
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+    }
+
+    @media (min-width: 768px) {
+      .bets-table-wrap {
+        display: block;
+      }
+    }
+
+    .bets-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #FFFFFF;
+      font-size: 15px;
+    }
+
+    .bets-table th {
+      background-color: var(--bg-soft);
+      color: var(--navy);
+      font-weight: 700;
+      padding: 11px 12px;
+      text-align: left;
+      border-bottom: 1.5px solid var(--border-warm);
+      white-space: nowrap;
+    }
+
+    .bets-table td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border-warm);
+      vertical-align: middle;
+    }
+
+    .bets-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .bets-table .num-col {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    /* Mobile Allocation Cards */
+    .bet-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 768px) {
+      .bet-cards-list {
+        display: none;
+      }
+    }
+
+    .bet-card {
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-warm);
+      border-left: 5px solid var(--green);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-card);
+    }
+
+    .bet-combo {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+    }
+
+    .bet-names {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-top: 3px;
+    }
+
+    .bet-meta {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .bet-right {
+      text-align: right;
+      margin-left: auto;
+    }
+
+    .bet-stake {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      line-height: 1.2;
+    }
+
+    .bet-payout {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .notice-box {
+      border-radius: var(--radius-md);
+      padding: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      line-height: 1.55;
+    }
+
+    .notice-amber {
+      background-color: var(--amber-bg);
+      border: 1.5px solid var(--amber-border);
+      color: var(--amber);
+    }
+
+    .notice-burgundy {
+      background-color: var(--burgundy-bg);
+      border: 1.5px solid var(--burgundy-border);
+      color: var(--burgundy);
+    }
+
+    .notice-green {
+      background-color: var(--green-bg);
+      border: 1.5px solid var(--green-border);
+      color: var(--green);
+    }
+
+    /* =========================================================================
+       8. TAB 4: PERSONALITY & BIAS ICON CARDS WITH ACCORDIONS
+       ========================================================================= */
+    .choice-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .choice-card {
+      background-color: #FFFFFF;
+      border: 2px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .choice-card.selected {
+      border-color: var(--navy);
+      background-color: #F7FAFD;
+    }
+
+    .choice-card.selected.caution {
+      border-color: var(--amber);
+      background-color: #FFFDF7;
+    }
+
+    .choice-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .choice-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background-color: var(--bg-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .choice-title {
+      margin: 0 0 4px 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+
+    .choice-sub {
+      display: inline-block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      background-color: var(--bg-soft);
+      padding: 3px 9px;
+      border-radius: 6px;
+    }
+
+    .choice-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .choice-btn-row .btn {
+      flex: 1 1 140px;
+      font-size: 14px;
+    }
+
+    .accordion-panel {
+      display: none;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1.5px dashed var(--border-strong);
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .accordion-panel.open {
+      display: block;
+    }
+
+    .accordion-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .accordion-list strong {
+      color: var(--navy);
+    }
+
+    /* =========================================================================
+       9. MOBILE FIXED BOTTOM 4-TAB NAVIGATION
+       ========================================================================= */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      height: 76px;
+      background-color: #FFFFFF;
+      border-top: 1.5px solid var(--border-strong);
+      box-shadow: 0 -3px 12px rgba(30, 41, 59, 0.08);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    @media (min-width: 768px) {
+      .bottom-nav {
+        display: none;
+      }
+    }
+
+    .m-tab-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 2px;
+    }
+
+    .m-tab-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .m-tab-btn.active {
+      color: var(--navy);
+      background-color: var(--navy-bg);
+      border-top: 3px solid var(--navy);
+    }
+
+    .m-tab-badge {
+      position: absolute;
+      top: 6px;
+      right: 12%;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background-color: var(--green);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* =========================================================================
+       10. MODALS (ULTRA-CLEAR 3-TAB IMPORT MODAL, HELP SHEET, SHARE MODAL)
+       ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background-color: rgba(30, 41, 59, 0.54);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+
+    @media (min-width: 640px) {
+      .modal-backdrop {
+        align-items: center;
+        padding: 18px;
+      }
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 640px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: #FFFFFF;
+      border-radius: 20px 20px 0 0;
+      padding: 18px 16px 26px;
+      box-shadow: var(--shadow-modal);
+    }
+
+    @media (min-width: 640px) {
+      .modal-sheet {
+        border-radius: var(--radius-lg);
+        padding: 22px 22px 26px;
+      }
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+      border-bottom: 1.5px solid var(--border-warm);
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* 3 Segmented Tabs inside Import Modal */
+    .import-seg-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background-color: var(--bg-soft);
+      padding: 5px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-warm);
+      margin-bottom: 16px;
+    }
+
+    .import-seg-btn {
+      min-height: 48px;
+      padding: 8px 4px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid transparent;
+      background-color: transparent;
+      color: var(--text-sub);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    @media (min-width: 520px) {
+      .import-seg-btn {
+        font-size: 14px;
+        flex-direction: row;
+        gap: 6px;
+      }
+    }
+
+    .import-seg-btn.active {
+      background-color: var(--navy);
+      color: #FFFFFF;
+      border-color: var(--navy);
+      box-shadow: 0 2px 6px rgba(30, 58, 95, 0.22);
+    }
+
+    .import-pane {
+      display: none;
+    }
+
+    .import-pane.active {
+      display: block;
+    }
+
+    /* Friendly 3-step guide box */
+    .guide-3step {
+      background-color: var(--navy-bg);
+      border: 1.5px solid var(--navy-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .guide-3step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .guide-3step-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-field-group {
+      margin-bottom: 12px;
+    }
+
+    .modal-field-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .action-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .import-textarea {
+      width: 100%;
+      min-height: 148px;
+      padding: 12px;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      resize: vertical;
+    }
+
+    .import-textarea:focus {
+      outline: none;
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.14);
+    }
+
+    /* Live Preview Box for Tab 1 */
+    .live-preview-wrap {
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+
+    .preview-list-box {
+      max-height: 190px;
+      overflow-y: auto;
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--green-border);
+      border-radius: var(--radius-sm);
+      margin-top: 8px;
+    }
+
+    .preview-list-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border-warm);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      flex-wrap: wrap;
+    }
+
+    .preview-list-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Live Preview Card for Tab 2 (Share Code) */
+    .share-preview-card {
+      background-color: var(--green-bg);
+      border: 1.5px solid var(--green-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-top: 12px;
+      margin-bottom: 14px;
+    }
+
+    .share-preview-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+
+    .share-preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .share-preview-item {
+      background-color: #FFFFFF;
+      border: 1px solid var(--green-border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .share-preview-k {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .share-preview-v {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* Manual Entry List for Tab 3 */
+    .manual-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 330px;
+      overflow-y: auto;
+      padding-right: 2px;
+      margin-bottom: 12px;
+    }
+
+    .manual-row {
+      background-color: var(--bg-soft);
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-md);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .manual-row-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .manual-row-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .manual-num-input {
+      width: 64px;
+      min-height: 44px;
+      padding: 6px;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .manual-name-input {
+      flex: 1;
+      min-width: 120px;
+      min-height: 44px;
+      padding: 6px 10px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+
+    .manual-odds-input {
+      width: 96px;
+      min-height: 44px;
+      padding: 6px 10px;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: right;
+      color: var(--text-main);
+      background-color: #FFFFFF;
+      border: 1.5px solid var(--border-strong);
+      border-radius: var(--radius-sm);
+    }
+
+    .manual-mkt-pill {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      background-color: var(--navy-bg);
+      border: 1px solid var(--navy-border);
+      padding: 5px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .manual-del-btn {
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--burgundy-border);
+      background-color: #FFFFFF;
+      color: var(--burgundy);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .manual-del-btn:hover {
+      background-color: var(--burgundy-bg);
+    }
+
+    /* Help Sheet Content */
+    .help-content {
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--text-main);
+    }
+
+    .help-example {
+      margin-top: 12px;
+      background-color: var(--amber-bg);
+      border: 1.5px solid var(--amber-border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--amber);
+    }
+
+    .help-topic-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1.5px solid var(--border-warm);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200;
+      background-color: var(--navy);
+      color: #FFFFFF;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: var(--shadow-modal);
+      display: none;
+      max-width: 92vw;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================================
+       TOP STICKY HEADER
+       ========================================================================= -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <h1 class="brand-title">
+          <span>TRICK LOGIC｜競馬観測LAB</span>
+          <span class="brand-badge">やさしいライト版</span>
+        </h1>
+        <p id="headerRaceSubtitle" class="race-subtitle">ジャパンカップ（東京芝2400m・サンプル）</p>
+      </div>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-green" onclick="openImportModal('paste')">📥 レース読込</button>
+        <button type="button" class="btn btn-navy" onclick="openShareModal()">🔗 シェア</button>
+        <button type="button" class="btn btn-amber-soft" onclick="openHelp('howto')">？ 使い方</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DESKTOP 4-TAB BAR -->
+  <nav class="desktop-tabs" aria-label="メインタブ（PC表示）">
+    <button type="button" class="d-tab-btn active" data-tab="tab-horses" onclick="switchTab('tab-horses')">
+      <span>🐎 勝率・印</span>
+    </button>
+    <button type="button" class="d-tab-btn" data-tab="tab-chart" onclick="switchTab('tab-chart')">
+      <span>📊 歪み図</span>
+    </button>
+    <button type="button" class="d-tab-btn" data-tab="tab-bets" onclick="switchTab('tab-bets')">
+      <span>🎫 買い目配分</span>
+      <span id="desktopBetBadge" class="tab-count-badge tabular">0</span>
+    </button>
+    <button type="button" class="d-tab-btn" data-tab="tab-settings" onclick="switchTab('tab-settings')">
+      <span>⚙️ 性格・条件</span>
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       MAIN WORKSPACE
+       ========================================================================= -->
+  <main class="main-container">
+
+    <!-- ***********************************************************************
+         TAB ①: 🐎 勝率・印
+         *********************************************************************** -->
+    <section id="tab-horses" class="tab-panel active">
+      <div class="prob-subbar">
+        <div class="prob-total-wrap">
+          <span class="prob-total-label">独自勝率合計</span>
+          <span id="totalWinVal" class="prob-total-num tabular prob-ok">100.0%</span>
+          <span id="totalWinStatus" class="prob-status-pill pill-ok">適正</span>
+        </div>
+
+        <div class="prob-actions">
+          <button type="button" class="btn btn-green" onclick="normalizeCustomWins()">100%に揃える</button>
+          <button type="button" class="btn btn-navy-soft" onclick="applyPersonalityToMarks(false)">印で自動配分</button>
+          <button type="button" class="help-btn" aria-label="印プリセット配分の解説" onclick="openHelp('marks')">？</button>
+        </div>
+      </div>
+
+      <div id="horseCardsList" class="horse-grid"></div>
+    </section>
+
+    <!-- ***********************************************************************
+         TAB ②: 📊 歪み図
+         *********************************************************************** -->
+    <section id="tab-chart" class="tab-panel">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h2 class="section-title">📊 市場歪みレーダー（割安・割高マップ）</h2>
+            <button type="button" class="help-btn" aria-label="市場基準勝率の解説" onclick="openHelp('market')">？</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:13px; font-weight:700; color:var(--text-sub);">期待値とは</span>
+            <button type="button" class="help-btn" aria-label="期待値（EV）の解説" onclick="openHelp('ev')">？</button>
+          </div>
+        </div>
+        <p class="section-desc">
+          緑の網掛けゾーン（EV 1.20以上）に入る馬ほど「実力に対してオッズが甘い狙い目」です。馬番の丸をタップすると下のカードに詳しい判定が出ます。
+        </p>
+
+        <div class="chart-frame">
+          <svg id="distortionSvg" viewBox="0 0 640 380" style="width:100%; height:auto; display:block; user-select:none;"></svg>
+          <div class="chart-legend">
+            <span class="legend-item"><i class="legend-dot" style="background:#1F6E4A;"></i>狙い目・割安（EV 1.15以上）</span>
+            <span class="legend-item"><i class="legend-dot" style="background:#1E3A5F;"></i>適正（EV 0.86〜1.14）</span>
+            <span class="legend-item"><i class="legend-dot" style="background:#9B2C2C;"></i>過剰人気・割高（EV 0.85以下）</span>
+          </div>
+        </div>
+
+        <div id="chartVerdictCard" class="verdict-card"></div>
+      </div>
+    </section>
+
+    <!-- ***********************************************************************
+         TAB ③: 🎫 買い目配分
+         *********************************************************************** -->
+    <section id="tab-bets" class="tab-panel">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h2 class="section-title">🎫 ハービル法 買い目＆自動配分</h2>
+            <button type="button" class="help-btn" aria-label="ハービル法とバイアス補正の解説" onclick="openHelp('harville')">？</button>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <span style="font-size:13px; font-weight:700; color:var(--text-sub);">ダッチング</span>
+            <button type="button" class="help-btn" aria-label="ダッチング自動配分の解説" onclick="openHelp('dutching')">？</button>
+          </div>
+        </div>
+        <p class="section-desc">
+          独自勝率と馬場補正から全通りの的中率と期待値（EV）を計算し、条件を満たす買い目へ100円単位で自動配分します。
+        </p>
+
+        <!-- Ticket Type Tabs -->
+        <div class="bet-type-row">
+          <button type="button" class="bet-pill" data-bet="win" onclick="selectBetType('win')">単勝</button>
+          <button type="button" class="bet-pill active" data-bet="quinella" onclick="selectBetType('quinella')">馬連</button>
+          <button type="button" class="bet-pill" data-bet="wide" onclick="selectBetType('wide')">ワイド</button>
+          <button type="button" class="bet-pill" data-bet="trio" onclick="selectBetType('trio')">3連複</button>
+          <button type="button" class="bet-pill" data-bet="trifecta" onclick="selectBetType('trifecta')">3連単</button>
+        </div>
+
+        <!-- Inline Filter & Budget Sliders/Inputs -->
+        <div class="bets-filter-grid">
+          <!-- Min EV -->
+          <div class="control-group">
+            <div class="control-head">
+              <div class="control-label">
+                <span>最低期待値 (EV)</span>
+                <button type="button" class="help-btn" aria-label="期待値（EV）の解説" onclick="openHelp('ev')">？</button>
+              </div>
+              <span id="betsMinEvVal" class="control-val tabular" style="color:var(--green);">1.20</span>
+            </div>
+            <div class="slider-stepper">
+              <input type="range" id="betsMinEvSlider" class="range-input" min="0.80" max="2.50" step="0.05" value="1.20"
+                oninput="setMinEv(this.value)" />
+              <input type="number" id="betsMinEvInput" class="compact-num-input tabular" min="0.50" max="5.00" step="0.05" value="1.20"
+                onchange="setMinEv(this.value)" aria-label="最低期待値入力" />
+            </div>
+          </div>
+
+          <!-- Min Hit Rate -->
+          <div class="control-group">
+            <div class="control-head">
+              <div class="control-label">
+                <span>最低的中率 (%)</span>
+                <button type="button" class="help-btn" aria-label="ハービル法の解説" onclick="openHelp('harville')">？</button>
+              </div>
+              <span id="betsMinHitVal" class="control-val tabular">1.0%</span>
+            </div>
+            <div class="slider-stepper">
+              <input type="range" id="betsMinHitSlider" class="range-input" min="0.5" max="15.0" step="0.5" value="1.0"
+                oninput="setMinHit(this.value)" />
+              <input type="number" id="betsMinHitInput" class="compact-num-input tabular" min="0.1" max="50.0" step="0.5" value="1.0"
+                onchange="setMinHit(this.value)" aria-label="最低的中率入力" />
+            </div>
+          </div>
+
+          <!-- Race Budget -->
+          <div class="control-group">
+            <div class="control-head">
+              <div class="control-label">
+                <span>レース予算 (円)</span>
+                <button type="button" class="help-btn" aria-label="ダッチングの解説" onclick="openHelp('dutching')">？</button>
+              </div>
+              <span id="betsBudgetVal" class="control-val tabular">2,000円</span>
+            </div>
+            <div class="slider-stepper">
+              <input type="range" id="betsBudgetSlider" class="range-input" min="500" max="20000" step="500" value="2000"
+                oninput="setBudget(this.value)" />
+              <input type="number" id="betsBudgetInput" class="compact-num-input tabular" min="100" max="100000" step="100" value="2000"
+                onchange="setBudget(this.value)" aria-label="レース予算入力" />
+            </div>
+          </div>
+        </div>
+
+        <!-- High-Variance Warning Banner -->
+        <div id="betsPersonalityAlert" class="notice-box notice-amber" style="display:none;">
+          🌪️ 現在は「① 高分散・事故多発型」が選択されています。原則ケン（見送り）または中穴のワイド・3連複少額観測が基本です。
+        </div>
+
+        <!-- Summary KPI Cards -->
+        <div class="kpi-grid tabular">
+          <div class="kpi-card">
+            <span class="kpi-label">設定予算</span>
+            <span id="kpiBudget" class="kpi-val">2,000円</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">抽出点数</span>
+            <span id="kpiCount" class="kpi-val">0点</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">平均EV</span>
+            <span id="kpiAvgEv" class="kpi-val" style="color:var(--green);">-</span>
+          </div>
+          <div class="kpi-card">
+            <span class="kpi-label">想定回収率レンジ</span>
+            <span id="kpiRoiRange" class="kpi-val" style="color:var(--green);">-</span>
+          </div>
+        </div>
+
+        <!-- Allocation Results (Desktop Table + Mobile Cards) -->
+        <div id="betsSummaryLine" style="font-size:13px; font-weight:700; color:var(--text-sub); margin-bottom:10px;"></div>
+        <div id="betsEmptyBox" class="notice-box notice-burgundy" style="display:none; margin-bottom:0;"></div>
+
+        <div id="betsTableWrap" class="bets-table-wrap">
+          <table class="bets-table tabular">
+            <thead>
+              <tr>
+                <th>買い目（組合せ）</th>
+                <th class="num-col">推定的中率</th>
+                <th class="num-col">推定オッズ</th>
+                <th class="num-col">期待値 (EV)</th>
+                <th class="num-col">推奨投資額</th>
+                <th class="num-col">的中時払戻</th>
+              </tr>
+            </thead>
+            <tbody id="betsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="betCardsContainer" class="bet-cards-list"></div>
+      </div>
+    </section>
+
+    <!-- ***********************************************************************
+         TAB ④: ⚙️ 性格・条件
+         *********************************************************************** -->
+    <section id="tab-settings" class="tab-panel">
+      <!-- Race Personality Cards -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h2 class="section-title">A. レースの性格分類（3タイプ）</h2>
+            <button type="button" class="help-btn" aria-label="直前反発救済の解説" onclick="openHelp('rebound')">？</button>
+          </div>
+        </div>
+        <p class="section-desc">
+          レースの性格を選んで下のボタンを押すと、印（◎〜消）に応じた勝率目安を一括セットできます。詳しい見分け方は各カードの「詳細を見る ▼」をタップしてください。
+        </p>
+
+        <div id="personalityCardsContainer" class="choice-stack"></div>
+
+        <div style="margin-top:14px;">
+          <button type="button" class="btn btn-navy" style="width:100%; min-height:48px; font-size:16px;" onclick="applyPersonalityToMarks(true)">
+            🎯 この性格の配分を今の印に適用する
+          </button>
+        </div>
+      </div>
+
+      <!-- Track Bias Cards -->
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title-row">
+            <h2 class="section-title">B. トラックバイアス補正（馬場傾向）</h2>
+            <button type="button" class="help-btn" aria-label="ハービル法とバイアス補正の解説" onclick="openHelp('harville')">？</button>
+          </div>
+        </div>
+        <p class="section-desc">
+          当日の馬場傾向に合わせて、2着・3着の来やすさ（条件付き確率）を自動で調整します。
+        </p>
+
+        <div id="biasCardsContainer" class="choice-stack"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       MOBILE FIXED BOTTOM 4-TAB BAR
+       ========================================================================= -->
+  <nav class="bottom-nav" aria-label="メインタブ（スマホ表示）">
+    <button type="button" class="m-tab-btn active" data-tab="tab-horses" onclick="switchTab('tab-horses')">
+      <span class="m-tab-icon">🐎</span>
+      <span>勝率・印</span>
+    </button>
+    <button type="button" class="m-tab-btn" data-tab="tab-chart" onclick="switchTab('tab-chart')">
+      <span class="m-tab-icon">📊</span>
+      <span>歪み図</span>
+    </button>
+    <button type="button" class="m-tab-btn" data-tab="tab-bets" onclick="switchTab('tab-bets')">
+      <span class="m-tab-icon">🎫</span>
+      <span>買い目配分</span>
+      <span id="mobileBetBadge" class="m-tab-badge tabular">0</span>
+    </button>
+    <button type="button" class="m-tab-btn" data-tab="tab-settings" onclick="switchTab('tab-settings')">
+      <span class="m-tab-icon">⚙️</span>
+      <span>性格・条件</span>
+    </button>
+  </nav>
+
+  <!-- =========================================================================
+       MODAL 1: ULTRA-CLEAR 3-TAB "📥 レース読込" MODAL
+       ========================================================================= -->
+  <div id="importModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'importModal')">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="importModalTitle">
+      <div class="modal-head">
+        <h3 id="importModalTitle" class="modal-title">📥 レース読込</h3>
+        <button type="button" class="btn" style="min-height:44px;" onclick="closeModal('importModal')">✕ 閉じる</button>
+      </div>
+
+      <!-- 3 Large Segmented Tabs -->
+      <div class="import-seg-tabs" role="tablist" aria-label="読込方法の切替">
+        <button type="button" class="import-seg-btn active" data-import-tab="paste" role="tab" onclick="switchImportTab('paste')">
+          <span>📋</span><span>オッズ表コピペ</span>
+        </button>
+        <button type="button" class="import-seg-btn" data-import-tab="share" role="tab" onclick="switchImportTab('share')">
+          <span>📩</span><span>共有コード</span>
+        </button>
+        <button type="button" class="import-seg-btn" data-import-tab="manual" role="tab" onclick="switchImportTab('manual')">
+          <span>✏️</span><span>カンタン手入力</span>
+        </button>
+      </div>
+
+      <!-- SUB-TAB 1: 📋 オッズ表コピペ -->
+      <div id="import-pane-paste" class="import-pane active">
+        <div class="guide-3step">
+          <div class="guide-3step-title">かんたん3ステップ</div>
+          <ul class="guide-3step-list">
+            <li>① JRA・netkeibaの「単勝オッズ」ページを開く</li>
+            <li>② 馬番・馬名・オッズをなぞってコピー</li>
+            <li>③ 下の枠に貼り付け → プレビューを確認して「反映」</li>
+          </ul>
+        </div>
+
+        <div class="modal-field-group">
+          <label for="importPasteRaceTitle" class="modal-field-label">レース名（任意）</label>
+          <input type="text" id="importPasteRaceTitle" class="input-field" placeholder="例：ジャパンカップ（東京芝2400m）" />
+        </div>
+
+        <div class="action-strip">
+          <label for="importPasteTextarea" style="font-size:14px; font-weight:700; color:var(--text-main);">単勝オッズをここに貼り付け</label>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-navy-soft" style="font-size:13px; padding:6px 11px;" onclick="fillPasteSample()">📝 お試しデータを入れる</button>
+            <button type="button" class="btn" style="font-size:13px; padding:6px 11px;" onclick="clearPasteArea()">🗑️ クリア</button>
+          </div>
+        </div>
+
+        <textarea id="importPasteTextarea" class="import-textarea" oninput="onPasteInput()"
+          placeholder="1 クロワデュノール 2.8&#10;2 オンブズマン 4.2&#10;3 ミニーホーク 6.5&#10;（JRAやnetkeibaの表をそのまま貼り付けても自動で読み取ります）"></textarea>
+
+        <!-- Real-Time Smart Parser Live Preview -->
+        <div id="pasteLivePreviewArea" class="live-preview-wrap"></div>
+
+        <button type="button" id="applyPasteBtn" class="btn btn-green" style="width:100%; min-height:50px; font-size:16px;" disabled onclick="applyParsedOdds()">
+          この内容でレースに反映する（0頭）
+        </button>
+      </div>
+
+      <!-- SUB-TAB 2: 📩 共有コード -->
+      <div id="import-pane-share" class="import-pane">
+        <p style="margin-top:0; margin-bottom:12px; font-size:15px; color:var(--text-main); line-height:1.6;">
+          LINEやメールで届いた<strong>「TRICK_LOGIC_SHARE:...」</strong>の文字列、または共有URLをそのまま貼り付けてください。
+        </p>
+
+        <div class="action-strip">
+          <label for="importShareTextarea" style="font-size:14px; font-weight:700; color:var(--text-main);">共有コード または 共有URL</label>
+          <button type="button" class="btn" style="font-size:13px; padding:6px 11px;" onclick="clearShareImportArea()">🗑️ クリア</button>
+        </div>
+
+        <textarea id="importShareTextarea" class="import-textarea" oninput="onShareCodeInput()"
+          placeholder="TRICK_LOGIC_SHARE:... または https://...#tl=... をそのまま貼り付けてください"></textarea>
+
+        <!-- Real-Time Share Validation Card -->
+        <div id="shareLivePreviewArea"></div>
+
+        <button type="button" id="applyShareBtn" class="btn btn-green" style="width:100%; min-height:50px; font-size:16px;" disabled onclick="applySharedCodeImport()">
+          この共有データを読み込む
+        </button>
+      </div>
+
+      <!-- SUB-TAB 3: ✏️ カンタン手入力 -->
+      <div id="import-pane-manual" class="import-pane">
+        <div class="modal-field-group">
+          <label for="importManualRaceTitle" class="modal-field-label">レース名</label>
+          <input type="text" id="importManualRaceTitle" class="input-field" placeholder="例：有馬記念（中山芝2500m）" />
+        </div>
+
+        <div class="action-strip">
+          <span style="font-size:14px; font-weight:700; color:var(--text-main);">出走馬リスト（馬番・馬名・単勝オッズ）</span>
+          <button type="button" class="btn btn-danger-soft" style="font-size:13px; padding:6px 11px;" onclick="clearManualDraft()">🗑️ リストを空にする</button>
+        </div>
+
+        <div id="manualDraftList" class="manual-list"></div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button type="button" class="btn btn-navy-soft" style="width:100%; min-height:48px; font-size:16px;" onclick="addManualDraftRow()">
+            ＋ 馬を1頭追加
+          </button>
+          <button type="button" id="applyManualBtn" class="btn btn-green" style="width:100%; min-height:50px; font-size:16px;" onclick="applyManualDraft()">
+            この出走表を反映する
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: 7-TOPIC "？" HELP SHEET MODAL
+       ========================================================================= -->
+  <div id="helpModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'helpModal')">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="helpModalTitle">
+      <div class="modal-head">
+        <h3 id="helpModalTitle" class="modal-title">？ 解説</h3>
+        <button type="button" class="btn" style="min-height:44px;" onclick="closeModal('helpModal')">✕ 閉じる</button>
+      </div>
+      <div id="helpModalContent" class="help-content"></div>
+      <div class="help-topic-list">
+        <div style="font-size:13px; font-weight:700; color:var(--text-sub);">ほかの解説を見る：</div>
+        <div id="helpOtherTopics" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: "🔗 シェア" MODAL
+       ========================================================================= -->
+  <div id="shareModal" class="modal-backdrop" onclick="handleBackdropClick(event, 'shareModal')">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+      <div class="modal-head">
+        <h3 id="shareModalTitle" class="modal-title">🔗 現在の設定をシェア</h3>
+        <button type="button" class="btn" style="min-height:44px;" onclick="closeModal('shareModal')">✕ 閉じる</button>
+      </div>
+
+      <p style="margin-top:0; font-size:15px; color:var(--text-sub); line-height:1.6;">
+        今のレース名・全頭の勝率配分・印・性格・予算をまとめて送れます。相手がリンクを開くか「📥 レース読込」→「📩 共有コード」に貼り付けるだけで同じ画面を再現できます。
+      </p>
+
+      <textarea id="shareOutputTextarea" class="import-textarea" style="min-height:124px; background-color:var(--bg-soft);" readonly onclick="this.select()"></textarea>
+
+      <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px;">
+        <button type="button" class="btn btn-navy" style="width:100%; min-height:48px; font-size:16px;" onclick="copyShareCode()">
+          📋 コピーする
+        </button>
+        <button type="button" id="nativeShareBtn" class="btn btn-green" style="width:100%; min-height:48px; font-size:16px; display:none;" onclick="shareViaNative()">
+          📱 LINE等でそのまま送る
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    // =========================================================================
+    // 1. MASTER DEFINITIONS (7 Help Topics, 3 Personalities, 3 Track Biases)
+    // =========================================================================
+    const HELP_TOPICS = {
+      ev: {
+        title: '1. 期待値（EV）とは？',
+        body: `
+          <p style="margin-top:0;">期待値（EV）とは、<strong>「100円買ったときに平均していくら戻ってくるか」</strong>の目安です。計算式は「自分の勝率 × オッズ」です。</p>
+          <ul style="padding-left:20px; margin:8px 0;">
+            <li><strong>EV 1.00未満：</strong>人気しすぎて損しやすい「割高（過剰人気）」</li>
+            <li><strong>EV 1.00前後：</strong>だいたいトントン（適正価格）</li>
+            <li><strong>EV 1.20以上：</strong>実力よりオッズが甘い「割安（狙い目）」</li>
+          </ul>
+        `,
+        example: '具体例：自分の予想勝率が「20%」の馬に単勝「6.5倍」がついていれば、0.20 × 6.5 ＝ EV 1.30。100円あたり平均130円戻るおいしい計算です。'
+      },
+      market: {
+        title: '2. 市場基準勝率（80÷オッズ）とは？',
+        body: `
+          <p style="margin-top:0;">JRAの単勝は控除率20%が引かれるため、<strong>「80 ÷ 単勝オッズ」</strong>を全頭合計100%へ整えると、<strong>「世間のファン全体がその馬に何％の勝率をつけているか」</strong>が見えてきます。</p>
+          <p>この市場基準勝率と自分の独自勝率を見比べることで、「買われすぎの馬」と「見落とされた狙い目」が一目でわかります。</p>
+        `,
+        example: '具体例：単勝2.8倍の馬は市場基準勝率が約29%。「そこまでは勝たない、20%くらいだ」と判断すれば、過剰人気（削る候補）とわかります。'
+      },
+      marks: {
+        title: '3. 印プリセット配分とは？',
+        body: `
+          <p style="margin-top:0;">全頭の勝率をゼロから手入力しなくても、競馬新聞と同じ <strong>◎ ○ ▲ △ ☆ ✓ 消</strong> の印をつけて<strong>「印で自動配分」</strong>を押せば、選んだレース性格に合う配分へ一発でセットされます。</p>
+          <p>「－」「＋」で微調整して合計が100%からズレたときは、緑の<strong>「100%に揃える」</strong>を押すだけで自動的に100.0%へ整います。</p>
+        `,
+        example: '具体例：「能力・時計収束型」なら ◎28%・○20%・▲15% と上位に厚く、「高分散型」なら ◎20%・○17%・▲15% と広めに自動配分されます。'
+      },
+      harville: {
+        title: '4. ハービル法＆バイアス補正とは？',
+        body: `
+          <p style="margin-top:0;"><strong>ハービル法</strong>とは、各馬の「1着になる確率（勝率）」だけから、馬連・ワイド・3連複・3連単といった「2着・3着の組合せ的中率」を自動計算する数式です。</p>
+          <p>さらに<strong>トラックバイアス補正</strong>を選ぶと、「イン前残り」「外差し有利」といった当日の馬場傾向に合わせて2・3着の来やすさを現実に近づけられます。</p>
+        `,
+        example: '具体例：東京芝で「外差し・瞬発力補正」を選ぶと、差し・追込馬や前走不利馬が2・3着に突っ込んでくる連系馬券の確率が上乗せされます。'
+      },
+      dutching: {
+        title: '5. ダッチング自動配分とは？',
+        body: `
+          <p style="margin-top:0;"><strong>ダッチング</strong>とは、複数買う馬券のうち「どれが当たっても払戻金がだいたい同じになる」ように、低オッズには厚く、高オッズには薄く100円単位で自動配分する資金管理法です。</p>
+          <p>「当たったのに投資額を下回ってしまった（トリガミ）」という失敗を防ぎやすくなります。</p>
+        `,
+        example: '具体例：予算2,000円で「4.0倍」と「12.0倍」を買うとき、4.0倍に1,500円・12.0倍に500円と自動計算し、どちらが当たっても約6,000円の払戻を目指します。'
+      },
+      rebound: {
+        title: '6. 直前反発救済とは？',
+        body: `
+          <p style="margin-top:0;">発走直前になると、1〜2番人気に資金が集中して<strong>4〜7番人気帯の実力馬のオッズがポンと跳ね上がる（直前反発）</strong>ことがあります。</p>
+          <p>こうした馬はおいしい中穴になりやすいため、評価を下げすぎず<strong>最低でも勝率10〜12%を残しておく</strong>ことで、ヒモ抜けを防ぐ重要ルールです。</p>
+        `,
+        example: '具体例：朝よりオッズが上がった中穴馬に「直前反発+」タグをつけて勝率10%以上をキープしておくと、高EV買い目に残りやすくなります。'
+      },
+      howto: {
+        title: '7. はじめての使い方3ステップ',
+        body: `
+          <p style="margin-top:0;">むずかしい操作はいりません。次の3ステップだけで「オッズがおいしい狙い目」が見つかります。</p>
+          <ol style="padding-left:20px; margin:8px 0;">
+            <li style="margin-bottom:8px;"><strong>レースを読み込む：</strong>上の「📥 レース読込」からオッズ表を貼り付けるか、手入力します（最初はジャパンカップのサンプルが入っています）。</li>
+            <li style="margin-bottom:8px;"><strong>性格と印を決める：</strong>「⚙️ 性格・条件」でレース性格を選び、「🐎 勝率・印」で印や勝率（合計100%）を調整します。</li>
+            <li><strong>歪み図と買い目を見る：</strong>「📊 歪み図」で緑ゾーンの狙い目を確認し、「🎫 買い目配分」でおすすめ馬券と配分金額をチェックします。</li>
+          </ol>
+        `,
+        example: 'ヒント：作った予想は右上の「🔗 シェア」からLINE等でそのまま送れます。相手は「📥 レース読込」→「📩 共有コード」から1タップで開けます。'
+      }
+    };
+
+    const PERSONALITIES = [
+      {
+        id: 'high_variance',
+        icon: '🌪️',
+        shortName: '① 高分散・事故多発型',
+        title: '① 高分散・事故多発型',
+        summary: '2歳戦・ハンデ戦向け（原則ケン／中穴ワイド・3連複限定）',
+        caution: true,
+        races: '2歳新馬・未勝利・2歳重賞・ハンデ戦など波乱の多いレース',
+        guide: '◎20% / ○17% / ▲15% / △12%×2 / ☆8%×2 / ✓2%×4',
+        rule: '1番人気を削り、4〜7番人気・直前反発馬に最低10〜12%を残す。大勝負は避けてワイド・3連複中心。',
+        weights: { '◎': [20.0], '○': [17.0], '▲': [15.0], '△': [12.0, 12.0], '☆': [8.0, 8.0], '✓': [2.0, 2.0, 2.0, 2.0], '消': [0] }
+      },
+      {
+        id: 'convergent',
+        icon: '🎯',
+        shortName: '② 能力・時計収束型',
+        title: '② 能力・時計収束型',
+        summary: '古馬重賞・ジャパンC向け（ロジック最大効率の主戦場）',
+        caution: false,
+        races: '3歳秋〜古馬の定量・別定重賞（ジャパンC等）、2〜3勝クラス',
+        guide: '◎28% / ○20% / ▲15% / △10%×2 / ☆5%×2 / ✓2.5%×2 / ✓2.0%',
+        rule: '能力裏付けのある上位馬へ厚く配分し、過剰人気（1〜2倍台など）を削ってEV 1.20以上を狙い撃つ。',
+        weights: { '◎': [28.0], '○': [20.0], '▲': [15.0], '△': [10.0, 10.0], '☆': [5.0, 5.0], '✓': [2.5, 2.5, 2.0], '消': [0] }
+      },
+      {
+        id: 'upset_fav',
+        icon: '⚖️',
+        shortName: '③ 1番人気取りこぼし型',
+        title: '③ 1番人気取りこぼし型',
+        summary: '能力拮抗・1番人気2〜3着付け狙い（アタマ別馬）',
+        caution: false,
+        races: '1番人気が外枠・初距離・展開不安で勝ち切りに疑問がある重賞',
+        guide: '◎22% / ○18% / ▲14% / △11%×2 / ☆7%×2 / ✓2.5%×4',
+        rule: '1番人気は○〜▲に抑え、適性・決め手上位の別馬を◎に据えて「1番人気1着固定」の養分ゾーンを回避。',
+        weights: { '◎': [22.0], '○': [18.0], '▲': [14.0], '△': [11.0, 11.0], '☆': [7.0, 7.0], '✓': [2.5, 2.5, 2.5, 2.5], '消': [0] }
+      }
+    ];
+
+    const BIAS_MODES = [
+      {
+        id: 'standard',
+        icon: '⚖️',
+        title: '標準（補正なし）',
+        summary: '純粋なハービル法でそのまま計算（まずはこちらが基本）',
+        detail: '入力した独自勝率をそのまま2着・3着の条件付き確率へ当てはめます。馬場傾向がフラットな日や、枠順確定直後の初期確認に最適です。'
+      },
+      {
+        id: 'inner_front',
+        icon: '🏃',
+        title: 'イン前残り補正',
+        summary: '内枠・逃げ・先行馬の2〜3着率を引き上げ',
+        detail: '開幕週の速い馬場やスローペース想定向け。内枠や「有利枠」タグ・先行脚質の2〜3着確率係数を約1.18倍へ上げ、追込馬を控えめに調整します。'
+      },
+      {
+        id: 'outer_closer',
+        icon: '⚡',
+        title: '外差し・瞬発力補正',
+        summary: '差し・追込・末脚型の2〜3着率を引き上げ',
+        detail: '開催後半の東京芝2400mや外差しが決まる馬場向け。差し・追込脚質や「前走不利」「同舞台・着差◎」タグ馬の2〜3着確率係数を約1.18倍へ引き上げます。'
+      }
+    ];
+
+    const REASON_TAGS = [
+      '有利枠',
+      '前走不利',
+      '同舞台・着差◎',
+      '海外R122+',
+      '直前反発+',
+      '過剰人気(削)'
+    ];
+
+    const MARKS = ['◎', '○', '▲', '△', '☆', '✓', '消'];
+
+    // =========================================================================
+    // 2. PRE-LOADED 10-RUNNER JAPAN CUP SAMPLE DATA (Total Win% = 100.0%)
+    // =========================================================================
+    function createDefaultState() {
+      return {
+        raceName: 'ジャパンカップ（東京芝2400m・サンプル）',
+        personality: 'convergent',
+        bias: 'standard',
+        betType: 'quinella',
+        budget: 2000,
+        minEv: 1.20,
+        minHit: 1.0,
+        activeTab: 'tab-horses',
+        selectedChartHorse: 3,
+        horses: [
+          { num: 1, waku: 1, name: 'クロワデュノール', mark: '○', odds: 2.8, customWin: 20.0, style: '先行', tags: ['有利枠', '過剰人気(削)'] },
+          { num: 2, waku: 2, name: 'オンブズマン', mark: '◎', odds: 4.2, customWin: 26.0, style: '差し', tags: ['海外R122+', '同舞台・着差◎'] },
+          { num: 3, waku: 3, name: 'ミニーホーク', mark: '▲', odds: 6.5, customWin: 19.0, style: '差し', tags: ['海外R122+', '直前反発+'] },
+          { num: 4, waku: 4, name: 'チェルヴィニア', mark: '△', odds: 7.8, customWin: 7.0, style: '差し', tags: ['過剰人気(削)'] },
+          { num: 5, waku: 5, name: 'ジャスティンパレス', mark: '△', odds: 10.4, customWin: 12.0, style: '追込', tags: ['前走不利', '直前反発+'] },
+          { num: 6, waku: 6, name: 'シンエンペラー', mark: '☆', odds: 12.0, customWin: 6.5, style: '先行', tags: ['有利枠'] },
+          { num: 7, waku: 7, name: 'ドゥレッツァ', mark: '☆', odds: 15.6, customWin: 4.5, style: '先行', tags: ['前走不利'] },
+          { num: 8, waku: 7, name: 'ソールオリエンス', mark: '✓', odds: 22.5, customWin: 2.0, style: '追込', tags: [] },
+          { num: 9, waku: 8, name: 'ダノンベルーガ', mark: '✓', odds: 28.0, customWin: 1.5, style: '差し', tags: [] },
+          { num: 10, waku: 8, name: 'タスティエーラ', mark: '✓', odds: 34.0, customWin: 1.5, style: '先行', tags: ['同舞台・着差◎'] }
+        ]
+      };
+    }
+
+    let state = createDefaultState();
+    const openAccordions = {};
+
+    // Temporary state for the 3-tab Import Modal
+    let importModalState = {
+      activeSubTab: 'paste',
+      parsedPasteHorses: [],
+      decodedShareObj: null,
+      manualDraft: []
+    };
+
+    // =========================================================================
+    // 3. INITIALIZATION & STARTUP HASH RESTORE
+    // =========================================================================
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        checkUrlHash();
+        renderAll();
+      } catch (err) {
+        console.error('Startup error:', err);
+        showToast('初期化中にエラーが発生しました');
+      }
+    });
+
+    function showToast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        el.style.display = 'none';
+      }, 2600);
+    }
+
+    function assignWaku(num, total) {
+      if (total <= 8) return Math.min(8, Math.max(1, num));
+      const extra = total - 8;
+      const singleEnd = Math.max(0, 8 - extra);
+      if (num <= singleEnd) return num;
+      return Math.min(8, singleEnd + 1 + Math.floor((num - singleEnd - 1) / 2));
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // =========================================================================
+    // 4. NAVIGATION & MODAL HELPERS
+    // =========================================================================
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+      document.querySelectorAll('.tab-panel').forEach(p => {
+        p.classList.toggle('active', p.id === tabId);
+      });
+      document.querySelectorAll('.d-tab-btn, .m-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabId);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    function handleBackdropClick(e, id) {
+      if (e.target.id === id) closeModal(id);
+    }
+
+    // =========================================================================
+    // 5. PROBABILITY MATH & NORMALIZATION
+    // =========================================================================
+    function computeMarketMapForList(list) {
+      const raw = list.map(h => (h.odds > 0 ? 80 / h.odds : 0));
+      const sumRaw = raw.reduce((a, b) => a + b, 0) || 1;
+      const map = {};
+      list.forEach((h, i) => {
+        map[h.num] = (raw[i] / sumRaw) * 100;
+      });
+      const overround = list.reduce((acc, h) => acc + (h.odds > 0 ? 1 / h.odds : 0), 0) || 1.25;
+      return { map, overround };
+    }
+
+    function getMarketMetrics() {
+      return computeMarketMapForList(state.horses);
+    }
+
+    function normalizeCustomWins(silent = false) {
+      const sum = state.horses.reduce((a, h) => a + (Number(h.customWin) || 0), 0);
+      if (sum <= 0) {
+        const { map } = getMarketMetrics();
+        state.horses.forEach(h => {
+          h.customWin = +(map[h.num] || 0).toFixed(1);
+        });
+        normalizeCustomWins(true);
+        if (!silent) showToast('市場基準勝率をもとに100.0%へ揃えました');
+        return;
+      }
+
+      let running = 0;
+      state.horses.forEach(h => {
+        if (h.customWin <= 0) {
+          h.customWin = 0;
+        } else {
+          h.customWin = +((h.customWin / sum) * 100).toFixed(1);
+          running += h.customWin;
+        }
+      });
+
+      const diff = +(100 - running).toFixed(1);
+      if (diff !== 0) {
+        const top = [...state.horses].sort((a, b) => b.customWin - a.customWin)[0];
+        if (top && top.customWin > 0) {
+          top.customWin = Math.max(0, +(top.customWin + diff).toFixed(1));
+        }
+      }
+
+      renderAll();
+      if (!silent) showToast('独自勝率の合計を 100.0% に揃えました');
+    }
+
+    function applyPersonalityToMarks(switchToHorses = false) {
+      const cfg = PERSONALITIES.find(p => p.id === state.personality) || PERSONALITIES[1];
+
+      const marked = state.horses.filter(h => h.mark && h.mark !== '消').length;
+      if (marked < 3) {
+        const byOdds = [...state.horses].sort((a, b) => a.odds - b.odds);
+        const fallbackMarks = ['◎', '○', '▲', '△', '△', '☆', '☆', '✓', '✓', '✓', '✓'];
+        byOdds.forEach((h, i) => {
+          const target = state.horses.find(x => x.num === h.num);
+          target.mark = fallbackMarks[i] || '消';
+        });
+      }
+
+      const counters = { '◎': 0, '○': 0, '▲': 0, '△': 0, '☆': 0, '✓': 0, '消': 0 };
+      const sorted = [...state.horses].sort((a, b) => a.odds - b.odds);
+
+      sorted.forEach(item => {
+        const h = state.horses.find(x => x.num === item.num);
+        const arr = cfg.weights[h.mark];
+        if (arr) {
+          const idx = counters[h.mark] || 0;
+          h.customWin = idx < arr.length ? arr[idx] : arr[arr.length - 1];
+          counters[h.mark] = idx + 1;
+        } else {
+          h.customWin = 0;
+        }
+      });
+
+      normalizeCustomWins(true);
+      showToast(`${cfg.icon} ${cfg.shortName}の配分を適用しました`);
+      if (switchToHorses) switchTab('tab-horses');
+    }
+
+    // =========================================================================
+    // 6. HORSE & FILTER MUTATION HANDLERS
+    // =========================================================================
+    function updateHorseMark(num, mark) {
+      const h = state.horses.find(x => x.num === num);
+      if (!h) return;
+      h.mark = mark;
+      if (mark === '消') h.customWin = 0;
+      renderAll();
+    }
+
+    function updateHorseOdds(num, val) {
+      const h = state.horses.find(x => x.num === num);
+      if (!h) return;
+      const n = parseFloat(val);
+      if (!isNaN(n) && n >= 1.0) {
+        h.odds = +n.toFixed(1);
+        renderAll();
+      }
+    }
+
+    function stepHorseWin(num, delta) {
+      const h = state.horses.find(x => x.num === num);
+      if (!h) return;
+      h.customWin = Math.max(0, Math.min(99.9, +(h.customWin + delta).toFixed(1)));
+      if (h.customWin > 0 && h.mark === '消') h.mark = '✓';
+      renderAll();
+    }
+
+    function setHorseWinDirect(num, val) {
+      const h = state.horses.find(x => x.num === num);
+      if (!h) return;
+      const n = parseFloat(val);
+      h.customWin = isNaN(n) ? 0 : Math.max(0, Math.min(99.9, +n.toFixed(1)));
+      renderAll();
+    }
+
+    function toggleHorseTag(num, tag) {
+      const h = state.horses.find(x => x.num === num);
+      if (!h) return;
+      if (!Array.isArray(h.tags)) h.tags = [];
+      const idx = h.tags.indexOf(tag);
+      if (idx >= 0) h.tags.splice(idx, 1);
+      else h.tags.push(tag);
+      renderAll();
+    }
+
+    function selectPersonality(id) {
+      state.personality = id;
+      renderSettings();
+      renderBets();
+      const found = PERSONALITIES.find(p => p.id === id);
+      if (found) showToast(`レース性格を「${found.icon} ${found.shortName}」にしました`);
+    }
+
+    function selectBias(id) {
+      state.bias = id;
+      renderSettings();
+      renderBets();
+      const found = BIAS_MODES.find(b => b.id === id);
+      if (found) showToast(`馬場補正を「${found.title}」にしました`);
+    }
+
+    function toggleAccordion(key) {
+      openAccordions[key] = !openAccordions[key];
+      renderSettings();
+    }
+
+    function setBudget(val) {
+      const n = parseInt(val, 10);
+      state.budget = isNaN(n) ? 2000 : Math.max(100, Math.min(100000, Math.round(n / 100) * 100));
+      syncBetControls();
+      renderBets();
+    }
+
+    function setMinEv(val) {
+      const n = parseFloat(val);
+      state.minEv = isNaN(n) ? 1.20 : Math.max(0.50, Math.min(5.00, +n.toFixed(2)));
+      syncBetControls();
+      renderBets();
+    }
+
+    function setMinHit(val) {
+      const n = parseFloat(val);
+      state.minHit = isNaN(n) ? 1.0 : Math.max(0.1, Math.min(50.0, +n.toFixed(1)));
+      syncBetControls();
+      renderBets();
+    }
+
+    function selectBetType(type) {
+      state.betType = type;
+      document.querySelectorAll('.bet-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.bet === type);
+      });
+      renderBets();
+    }
+
+    function syncBetControls() {
+      const evSliderVal = Math.min(2.50, Math.max(0.80, state.minEv));
+      document.getElementById('betsMinEvSlider').value = evSliderVal;
+      document.getElementById('betsMinEvInput').value = state.minEv.toFixed(2);
+      document.getElementById('betsMinEvVal').textContent = state.minEv.toFixed(2);
+
+      const hitSliderVal = Math.min(15.0, Math.max(0.5, state.minHit));
+      document.getElementById('betsMinHitSlider').value = hitSliderVal;
+      document.getElementById('betsMinHitInput').value = state.minHit.toFixed(1);
+      document.getElementById('betsMinHitVal').textContent = `${state.minHit.toFixed(1)}%`;
+
+      const budgetSliderVal = Math.min(20000, Math.max(500, state.budget));
+      document.getElementById('betsBudgetSlider').value = budgetSliderVal;
+      document.getElementById('betsBudgetInput').value = state.budget;
+      document.getElementById('betsBudgetVal').textContent = `${state.budget.toLocaleString()}円`;
+    }
+
+    // =========================================================================
+    // 7. MAIN RENDERING FUNCTIONS
+    // =========================================================================
+    function renderAll() {
+      document.getElementById('headerRaceSubtitle').textContent = state.raceName;
+      syncBetControls();
+      renderTab1Horses();
+      renderTab2Chart();
+      renderBets();
+      renderSettings();
+    }
+
+    function renderTab1Horses() {
+      const { map: marketMap } = getMarketMetrics();
+      const total = state.horses.reduce((a, h) => a + (Number(h.customWin) || 0), 0);
+
+      const valEl = document.getElementById('totalWinVal');
+      const statusEl = document.getElementById('totalWinStatus');
+      valEl.textContent = `${total.toFixed(1)}%`;
+
+      if (Math.abs(total - 100.0) <= 0.15) {
+        valEl.className = 'prob-total-num tabular prob-ok';
+        statusEl.className = 'prob-status-pill pill-ok';
+        statusEl.textContent = '100%適正';
+      } else {
+        valEl.className = 'prob-total-num tabular prob-warn';
+        statusEl.className = 'prob-status-pill pill-warn';
+        const diff = +(100 - total).toFixed(1);
+        statusEl.textContent = diff > 0 ? `あと +${diff.toFixed(1)}%` : `${Math.abs(diff).toFixed(1)}% 超過`;
+      }
+
+      const container = document.getElementById('horseCardsList');
+      container.innerHTML = state.horses.map(h => {
+        const mkt = marketMap[h.num] || 0;
+        const winEv = (h.customWin / 100) * h.odds;
+        const gap = h.customWin - mkt;
+
+        let cardClass = '';
+        let evClass = 'ev-neutral';
+        let evLabel = `単EV ${winEv.toFixed(2)} 適正`;
+
+        if (h.customWin <= 0) {
+          evLabel = '評価外';
+        } else if (winEv >= 1.15) {
+          cardClass = 'card-undervalued';
+          evClass = 'ev-green';
+          evLabel = `単EV ${winEv.toFixed(2)} 割安`;
+        } else if (winEv <= 0.85) {
+          cardClass = 'card-overvalued';
+          evClass = 'ev-red';
+          evLabel = `単EV ${winEv.toFixed(2)} 割高`;
+        }
+
+        const markOptions = MARKS.map(m =>
+          `<option value="${m}" ${h.mark === m ? 'selected' : ''}>${m}</option>`
+        ).join('');
+
+        const tagChips = REASON_TAGS.map(tag => {
+          const isActive = Array.isArray(h.tags) && h.tags.includes(tag);
+          return `<button type="button" class="tag-chip ${isActive ? 'active' : ''}" data-tag="${tag}" onclick="toggleHorseTag(${h.num}, '${tag}')">${tag}</button>`;
+        }).join('');
+
+        return `
+          <article class="horse-card ${cardClass}">
+            <div class="horse-top">
+              <div class="horse-identity">
+                <span class="horse-num waku-${h.waku} tabular">${h.num}</span>
+                <h3 class="horse-name">${escapeHtml(h.name)}</h3>
+              </div>
+              <div class="horse-top-controls">
+                <select class="mark-select" aria-label="${escapeHtml(h.name)}の印" onchange="updateHorseMark(${h.num}, this.value)">
+                  ${markOptions}
+                </select>
+                <span class="ev-badge-wrap">
+                  <span class="ev-pill ${evClass} tabular">${evLabel}</span>
+                  <button type="button" class="help-btn" aria-label="期待値（EV）とは" onclick="openHelp('ev')">？</button>
+                </span>
+              </div>
+            </div>
+
+            <div class="horse-middle">
+              <div class="field-box">
+                <div class="field-label"><span>単勝オッズ</span></div>
+                <div class="odds-input-row">
+                  <input type="number" class="odds-input tabular" step="0.1" min="1.0"
+                    aria-label="${escapeHtml(h.name)}の単勝オッズ"
+                    value="${h.odds.toFixed(1)}"
+                    onchange="updateHorseOdds(${h.num}, this.value)" />
+                  <span style="font-size:15px; font-weight:700; color:var(--text-sub);">倍</span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <div class="field-label">
+                  <span>市場基準勝率</span>
+                  <button type="button" class="help-btn" aria-label="市場基準勝率とは" onclick="openHelp('market')">？</button>
+                </div>
+                <div class="market-rate-val tabular">
+                  <span>${mkt.toFixed(1)}%</span>
+                  <span class="gap-sub" style="color:${gap >= 1 ? 'var(--green)' : gap <= -1 ? 'var(--burgundy)' : 'var(--text-sub)'};">
+                    (${gap >= 0 ? '+' : ''}${gap.toFixed(1)}%)
+                  </span>
+                </div>
+              </div>
+
+              <div class="field-box">
+                <div class="field-label"><span>独自勝率（0.5%刻み）</span></div>
+                <div class="stepper-row">
+                  <button type="button" class="step-btn" aria-label="${escapeHtml(h.name)}の勝率を0.5%減らす" onclick="stepHorseWin(${h.num}, -0.5)">－</button>
+                  <div class="custom-prob-wrap">
+                    <input type="number" class="custom-prob-input tabular" step="0.5" min="0" max="99.9"
+                      aria-label="${escapeHtml(h.name)}の独自勝率"
+                      value="${h.customWin.toFixed(1)}"
+                      onchange="setHorseWinDirect(${h.num}, this.value)" />
+                    <span class="custom-prob-unit">%</span>
+                  </div>
+                  <button type="button" class="step-btn" aria-label="${escapeHtml(h.name)}の勝率を0.5%増やす" onclick="stepHorseWin(${h.num}, 0.5)">＋</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="tags-row">
+              ${tagChips}
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderTab2Chart() {
+      const svg = document.getElementById('distortionSvg');
+      const { map: marketMap, overround } = getMarketMetrics();
+
+      const maxVal = Math.max(
+        35,
+        Math.ceil((Math.max(...Object.values(marketMap), ...state.horses.map(h => h.customWin)) + 4) / 5) * 5
+      );
+
+      const W = 640, H = 380;
+      const padL = 62, padR = 26, padT = 26, padB = 54;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      const xScale = v => padL + (Math.min(maxVal, v) / maxVal) * plotW;
+      const yScale = v => padT + plotH - (Math.min(maxVal, v) / maxVal) * plotH;
+
+      const fontAttr = 'font-family=\'"BIZ UDPGothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Meiryo", "Noto Sans JP", sans-serif\'';
+
+      const slopeEv10 = overround;
+      const slopeEv12 = 1.20 * overround;
+
+      const xAtTopEv12 = Math.min(maxVal, maxVal / slopeEv12);
+      const yAtRightEv12 = Math.min(maxVal, maxVal * slopeEv12);
+      let zonePoints = `${xScale(0)},${yScale(0)} ${xScale(0)},${yScale(maxVal)}`;
+      if (maxVal * slopeEv12 >= maxVal) {
+        zonePoints += ` ${xScale(xAtTopEv12)},${yScale(maxVal)}`;
+      } else {
+        zonePoints += ` ${xScale(maxVal)},${yScale(maxVal)} ${xScale(maxVal)},${yScale(yAtRightEv12)}`;
+      }
+
+      const xEndEv10 = (maxVal * slopeEv10 >= maxVal) ? (maxVal / slopeEv10) : maxVal;
+      const yEndEv10 = Math.min(maxVal, xEndEv10 * slopeEv10);
+
+      let out = '';
+      out += `<rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FAFAF6" stroke="#E2E0D8" stroke-width="1" />`;
+      out += `<polygon points="${zonePoints}" fill="#E5F4EC" opacity="0.88" />`;
+      out += `<text x="${padL + 12}" y="${padT + 24}" ${fontAttr} font-size="14" font-weight="700" fill="#1F6E4A">狙い目ゾーン（EV 1.20以上）</text>`;
+
+      const step = maxVal > 45 ? 10 : 5;
+      for (let v = 0; v <= maxVal; v += step) {
+        const x = xScale(v);
+        const y = yScale(v);
+        out += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + plotH}" stroke="#E6E4DC" stroke-width="1" />`;
+        out += `<line x1="${padL}" y1="${y}" x2="${padL + plotW}" y2="${y}" stroke="#E6E4DC" stroke-width="1" />`;
+        out += `<text x="${x}" y="${padT + plotH + 22}" ${fontAttr} font-size="13" font-weight="700" fill="#526071" text-anchor="middle">${v}%</text>`;
+        out += `<text x="${padL - 10}" y="${y + 5}" ${fontAttr} font-size="13" font-weight="700" fill="#526071" text-anchor="end">${v}%</text>`;
+      }
+
+      out += `<text x="${padL + plotW / 2}" y="${H - 8}" ${fontAttr} font-size="14" font-weight="700" fill="#1E293B" text-anchor="middle">市場基準勝率（80÷オッズ正規化 %）</text>`;
+      out += `<text x="18" y="${padT + plotH / 2}" ${fontAttr} font-size="14" font-weight="700" fill="#1E293B" text-anchor="middle" transform="rotate(-90, 18, ${padT + plotH / 2})">あなたの独自勝率（%）</text>`;
+
+      out += `<line x1="${xScale(0)}" y1="${yScale(0)}" x2="${xScale(xEndEv10)}" y2="${yScale(yEndEv10)}" stroke="#B45309" stroke-width="2.5" stroke-dasharray="7,5" />`;
+      out += `<text x="${xScale(xEndEv10) - 6}" y="${yScale(yEndEv10) + 18}" ${fontAttr} font-size="13" font-weight="700" fill="#B45309" text-anchor="end">損益分岐（EV = 1.0）</text>`;
+
+      state.horses.forEach(h => {
+        const mkt = marketMap[h.num] || 0;
+        const cx = xScale(mkt);
+        const cy = yScale(h.customWin);
+        const ev = (h.customWin / 100) * h.odds;
+
+        let fill = '#1E3A5F';
+        if (ev >= 1.15 && h.customWin > 0) fill = '#1F6E4A';
+        else if (ev <= 0.85) fill = '#9B2C2C';
+
+        const isSel = h.num === state.selectedChartHorse;
+        const r = isSel ? 18 : 15;
+        const ring = isSel ? `<circle cx="${cx}" cy="${cy}" r="23" fill="none" stroke="#B45309" stroke-width="3" />` : '';
+
+        out += `
+          <g style="cursor:pointer;" onclick="selectChartHorse(${h.num})">
+            ${ring}
+            <circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}" stroke="#FFFFFF" stroke-width="2.5" />
+            <text x="${cx}" y="${cy + 5}" ${fontAttr} font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">${h.num}</text>
+          </g>
+        `;
+      });
+
+      svg.innerHTML = out;
+      renderChartVerdictCard();
+    }
+
+    function selectChartHorse(num) {
+      state.selectedChartHorse = num;
+      renderTab2Chart();
+    }
+
+    function renderChartVerdictCard() {
+      const box = document.getElementById('chartVerdictCard');
+      let h = state.horses.find(x => x.num === state.selectedChartHorse);
+      if (!h && state.horses.length > 0) {
+        h = state.horses[0];
+        state.selectedChartHorse = h.num;
+      }
+      if (!h) {
+        box.innerHTML = '';
+        return;
+      }
+
+      const { map: marketMap } = getMarketMetrics();
+      const mkt = marketMap[h.num] || 0;
+      const gap = h.customWin - mkt;
+      const ev = (h.customWin / 100) * h.odds;
+
+      let verdictText = '世間の評価とほぼ一致する適正ゾーンです。連系の軸や相手としてバランスよく組み込めます。';
+      let borderCol = '#1E3A5F';
+      let badgeCls = 'ev-neutral';
+      let badgeText = `単勝EV ${ev.toFixed(2)} 適正`;
+
+      if (h.customWin <= 0) {
+        verdictText = '現在は評価外（0%）に設定されています。狙う根拠があれば勝率を割り当ててください。';
+      } else if (ev >= 1.20) {
+        verdictText = '実力に対してオッズが甘い狙い目です。単勝・馬連・3連系の軸や厚め配分の中心候補になります。';
+        borderCol = '#1F6E4A';
+        badgeCls = 'ev-green';
+        badgeText = `単勝EV ${ev.toFixed(2)} 狙い目`;
+      } else if (ev >= 1.15) {
+        verdictText = '市場よりやや評価が高く、期待値プラス圏の割安候補です。相手や連系で妙味が見込めます。';
+        borderCol = '#1F6E4A';
+        badgeCls = 'ev-green';
+        badgeText = `単勝EV ${ev.toFixed(2)} やや割安`;
+      } else if (ev <= 0.85) {
+        verdictText = '人気が先行してオッズが辛い過剰人気ゾーンです。頭固定は避け、評価を削るか2・3着付けで抑えるのが堅実です。';
+        borderCol = '#9B2C2C';
+        badgeCls = 'ev-red';
+        badgeText = `単勝EV ${ev.toFixed(2)} 割高`;
+      }
+
+      const tagsHtml = (h.tags && h.tags.length > 0)
+        ? h.tags.map(t => `<span class="tag-chip active" data-tag="${t}" style="cursor:default; min-height:30px;">${t}</span>`).join('')
+        : '<span style="font-size:13px; color:var(--text-sub);">根拠タグ未選択</span>';
+
+      box.innerHTML = `
+        <div class="verdict-top">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span class="horse-num waku-${h.waku} tabular">${h.num}</span>
+            <div>
+              <div class="horse-name">${escapeHtml(h.name)}（印：${h.mark}）</div>
+              <div style="font-size:14px; font-weight:700; color:var(--text-sub);">単勝 ${h.odds.toFixed(1)}倍</div>
+            </div>
+          </div>
+          <span class="ev-pill ${badgeCls} tabular">${badgeText}</span>
+        </div>
+
+        <div class="verdict-stats tabular">
+          <div class="v-stat-box">
+            <span class="v-stat-label">市場基準勝率</span>
+            <span class="v-stat-val">${mkt.toFixed(1)}%</span>
+          </div>
+          <div class="v-stat-box">
+            <span class="v-stat-label">あなたの独自勝率</span>
+            <span class="v-stat-val" style="color:var(--navy);">${h.customWin.toFixed(1)}%</span>
+          </div>
+          <div class="v-stat-box">
+            <span class="v-stat-label">評価ギャップ</span>
+            <span class="v-stat-val" style="color:${gap >= 0 ? 'var(--green)' : 'var(--burgundy)'};">${gap >= 0 ? '+' : ''}${gap.toFixed(1)}%</span>
+          </div>
+          <div class="v-stat-box">
+            <span class="v-stat-label">単勝EV</span>
+            <span class="v-stat-val" style="color:${borderCol};">${ev.toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div class="verdict-message" style="border-left-color:${borderCol};">
+          ${verdictText}
+        </div>
+
+        <div class="tags-row">${tagsHtml}</div>
+      `;
+    }
+
+    // =========================================================================
+    // 8. HARVILLE CONDITIONAL PROBABILITY & AUTO 100-YEN DUTCHING ENGINE
+    // =========================================================================
+    function renderBets() {
+      document.getElementById('betsPersonalityAlert').style.display =
+        state.personality === 'high_variance' ? 'block' : 'none';
+
+      document.querySelectorAll('.bet-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.bet === state.betType);
+      });
+
+      const active = state.horses.filter(h => h.customWin > 0.05);
+      const sumWin = active.reduce((s, h) => s + h.customWin, 0) || 100;
+      const p1 = active.map(h => h.customWin / sumWin);
+
+      // Track bias modified conditional probabilities for 2nd/3rd place
+      const rawPlace = active.map((h, i) => {
+        let w = p1[i];
+        const hasTag = t => Array.isArray(h.tags) && h.tags.includes(t);
+        if (state.bias === 'inner_front') {
+          if (h.style === '逃げ' || h.style === '先行' || hasTag('有利枠')) w *= 1.18;
+          if (h.waku <= 3) w *= 1.06;
+          if (h.style === '追込') w *= 0.84;
+        } else if (state.bias === 'outer_closer') {
+          if (h.style === '差し' || h.style === '追込' || hasTag('前走不利') || hasTag('同舞台・着差◎')) w *= 1.18;
+          if (h.style === '逃げ') w *= 0.84;
+        }
+        return w;
+      });
+      const sumPlace = rawPlace.reduce((a, b) => a + b, 0) || 1;
+      const pPlace = rawPlace.map(w => w / sumPlace);
+
+      const { map: marketMap } = getMarketMetrics();
+      const favOdds = active.length > 0 ? Math.min(...active.map(h => h.odds)) : 1;
+      const mktWinRaw = active.map(h => {
+        let m = Math.max(0.0005, (marketMap[h.num] || 0.1) / 100);
+        if (h.odds === favOdds) m *= 1.07; // 1st-favorite 1st-place bias
+        return m;
+      });
+      const sumMktWin = mktWinRaw.reduce((a, b) => a + b, 0) || 1;
+      const mktWin = mktWinRaw.map(m => m / sumMktWin);
+      const mktPlace = active.map(h => Math.max(0.0005, (marketMap[h.num] || 0.1) / 100));
+
+      const perm = (i, j, k, fArr, rArr) => {
+        const d1 = Math.max(0.01, 1 - rArr[i]);
+        const d2 = Math.max(0.01, 1 - rArr[i] - rArr[j]);
+        return fArr[i] * (rArr[j] / d1) * (rArr[k] / d2);
+      };
+
+      const n = active.length;
+      const combos = [];
+
+      if (state.betType === 'win') {
+        for (let i = 0; i < n; i++) {
+          const prob = p1[i];
+          const odds = active[i].odds;
+          combos.push({
+            comboText: `${active[i].num} ${active[i].name}`,
+            names: `印：${active[i].mark} ／ 単勝オッズ`,
+            hitPct: prob * 100,
+            odds: odds,
+            ev: prob * odds
+          });
+        }
+      } else if (state.betType === 'quinella') {
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            const prob = p1[i] * (pPlace[j] / Math.max(0.01, 1 - pPlace[i])) +
+                         p1[j] * (pPlace[i] / Math.max(0.01, 1 - pPlace[j]));
+            const mProb = mktWin[i] * (mktPlace[j] / Math.max(0.01, 1 - mktPlace[i])) +
+                          mktWin[j] * (mktPlace[i] / Math.max(0.01, 1 - mktPlace[j]));
+            const odds = Math.max(1.2, +(0.775 / Math.max(0.0004, mProb)).toFixed(1));
+            combos.push({
+              comboText: `${active[i].num} − ${active[j].num}`,
+              names: `${active[i].name} × ${active[j].name}`,
+              hitPct: prob * 100,
+              odds: odds,
+              ev: prob * odds
+            });
+          }
+        }
+      } else if (state.betType === 'wide') {
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            let prob = 0;
+            let mProb = 0;
+            for (let k = 0; k < n; k++) {
+              if (k === i || k === j) continue;
+              prob += perm(i, j, k, p1, pPlace) + perm(i, k, j, p1, pPlace) +
+                      perm(j, i, k, p1, pPlace) + perm(j, k, i, p1, pPlace) +
+                      perm(k, i, j, p1, pPlace) + perm(k, j, i, p1, pPlace);
+              mProb += perm(i, j, k, mktWin, mktPlace) + perm(i, k, j, mktWin, mktPlace) +
+                       perm(j, i, k, mktWin, mktPlace) + perm(j, k, i, mktWin, mktPlace) +
+                       perm(k, i, j, mktWin, mktPlace) + perm(k, j, i, mktWin, mktPlace);
+            }
+            const odds = Math.max(1.1, +((0.775 / Math.max(0.001, mProb)) * 0.34).toFixed(1));
+            combos.push({
+              comboText: `${active[i].num} ＝ ${active[j].num}`,
+              names: `${active[i].name}・${active[j].name}`,
+              hitPct: prob * 100,
+              odds: odds,
+              ev: prob * odds
+            });
+          }
+        }
+      } else if (state.betType === 'trio') {
+        for (let i = 0; i < n; i++) {
+          for (let j = i + 1; j < n; j++) {
+            for (let k = j + 1; k < n; k++) {
+              const prob = perm(i, j, k, p1, pPlace) + perm(i, k, j, p1, pPlace) +
+                           perm(j, i, k, p1, pPlace) + perm(j, k, i, p1, pPlace) +
+                           perm(k, i, j, p1, pPlace) + perm(k, j, i, p1, pPlace);
+              if (prob * 100 < state.minHit) continue;
+              const mProb = perm(i, j, k, mktWin, mktPlace) + perm(i, k, j, mktWin, mktPlace) +
+                            perm(j, i, k, mktWin, mktPlace) + perm(j, k, i, mktWin, mktPlace) +
+                            perm(k, i, j, mktWin, mktPlace) + perm(k, j, i, mktWin, mktPlace);
+              const odds = Math.max(2.0, +(0.75 / Math.max(0.0002, mProb)).toFixed(1));
+              combos.push({
+                comboText: `${active[i].num} − ${active[j].num} − ${active[k].num}`,
+                names: `${active[i].name}・${active[j].name}・${active[k].name}`,
+                hitPct: prob * 100,
+                odds: odds,
+                ev: prob * odds
+              });
+            }
+          }
+        }
+      } else if (state.betType === 'trifecta') {
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < n; j++) {
+            if (i === j) continue;
+            for (let k = 0; k < n; k++) {
+              if (k === i || k === j) continue;
+              const prob = perm(i, j, k, p1, pPlace);
+              if (prob * 100 < state.minHit) continue;
+              const mProb = perm(i, j, k, mktWin, mktPlace);
+              const odds = Math.max(3.0, +(0.725 / Math.max(0.0001, mProb)).toFixed(1));
+              combos.push({
+                comboText: `${active[i].num} → ${active[j].num} → ${active[k].num}`,
+                names: `1着 ${active[i].name} / 2着 ${active[j].name} / 3着 ${active[k].name}`,
+                hitPct: prob * 100,
+                odds: odds,
+                ev: prob * odds
+              });
+            }
+          }
+        }
+      }
+
+      const maxSlotsByBudget = Math.max(1, Math.floor(state.budget / 100));
+      const allMatching = combos
+        .filter(c => c.ev >= state.minEv && c.hitPct >= state.minHit)
+        .sort((a, b) => b.ev - a.ev);
+
+      const selected = allMatching.slice(0, Math.min(12, maxSlotsByBudget));
+
+      document.getElementById('mobileBetBadge').textContent = selected.length;
+      document.getElementById('desktopBetBadge').textContent = selected.length;
+      document.getElementById('kpiBudget').textContent = `${state.budget.toLocaleString()}円`;
+      document.getElementById('kpiCount').textContent = `${selected.length}点`;
+
+      const summaryLine = document.getElementById('betsSummaryLine');
+      const emptyBox = document.getElementById('betsEmptyBox');
+      const tableWrap = document.getElementById('betsTableWrap');
+      const tableBody = document.getElementById('betsTableBody');
+      const cardsBox = document.getElementById('betCardsContainer');
+
+      if (selected.length === 0) {
+        document.getElementById('kpiAvgEv').textContent = '-';
+        document.getElementById('kpiRoiRange').textContent = '-';
+        summaryLine.textContent = '';
+        emptyBox.style.display = 'block';
+        emptyBox.innerHTML = `条件（EV ${state.minEv.toFixed(2)}以上・的中率 ${state.minHit.toFixed(1)}%以上）を満たす買い目がありません。<br />無理に買わず「見送り（ケン）」とするか、上のスライダーや券種を調整してください。`;
+        tableWrap.style.display = 'none';
+        cardsBox.innerHTML = '';
+        return;
+      }
+
+      emptyBox.style.display = 'none';
+      tableWrap.style.display = '';
+
+      // 100-yen Dutching Allocation
+      const invSum = selected.reduce((acc, c) => acc + (1 / c.odds), 0);
+      let stakes = selected.map(c => Math.max(100, Math.round((state.budget * ((1 / c.odds) / invSum)) / 100) * 100));
+      let totalStake = stakes.reduce((a, b) => a + b, 0);
+
+      while (totalStake > state.budget && stakes.some(s => s > 100)) {
+        for (let i = stakes.length - 1; i >= 0 && totalStake > state.budget; i--) {
+          if (stakes[i] > 100) {
+            stakes[i] -= 100;
+            totalStake -= 100;
+          }
+        }
+      }
+      let addIdx = 0;
+      while (totalStake + 100 <= state.budget) {
+        stakes[addIdx % stakes.length] += 100;
+        totalStake += 100;
+        addIdx++;
+      }
+
+      const avgEv = selected.reduce((a, c) => a + c.ev, 0) / selected.length;
+      const payouts = selected.map((c, i) => Math.round(stakes[i] * c.odds));
+      const minRoi = Math.round((Math.min(...payouts) / totalStake) * 100);
+      const maxRoi = Math.round((Math.max(...payouts) / totalStake) * 100);
+
+      document.getElementById('kpiAvgEv').textContent = avgEv.toFixed(2);
+      document.getElementById('kpiRoiRange').textContent =
+        minRoi === maxRoi ? `${minRoi}%` : `${minRoi}〜${maxRoi}%`;
+
+      summaryLine.textContent = allMatching.length > selected.length
+        ? `全${allMatching.length}点のうち期待値上位${selected.length}点へ合計 ${totalStake.toLocaleString()}円 を自動配分しています。`
+        : `合計投資額：${totalStake.toLocaleString()}円（100円単位ダッチング配分）`;
+
+      // Desktop Table Rows
+      tableBody.innerHTML = selected.map((c, i) => `
+        <tr>
+          <td>
+            <div style="font-size:17px; font-weight:700; color:var(--text-main);">${escapeHtml(c.comboText)}</div>
+            <div style="font-size:13px; color:var(--text-sub);">${escapeHtml(c.names)}</div>
+          </td>
+          <td class="num-col"><strong>${c.hitPct.toFixed(1)}%</strong></td>
+          <td class="num-col"><strong>${c.odds.toFixed(1)}倍</strong></td>
+          <td class="num-col"><span class="ev-pill ev-green" style="min-height:30px; font-size:13px;">EV ${c.ev.toFixed(2)}</span></td>
+          <td class="num-col"><strong style="font-size:18px; color:var(--navy);">${stakes[i].toLocaleString()}円</strong></td>
+          <td class="num-col"><strong style="color:var(--green);">約${payouts[i].toLocaleString()}円</strong></td>
+        </tr>
+      `).join('');
+
+      // Mobile Cards
+      cardsBox.innerHTML = selected.map((c, i) => `
+        <div class="bet-card">
+          <div style="min-width:0; flex:1 1 200px;">
+            <div class="bet-combo tabular">${escapeHtml(c.comboText)}</div>
+            <div class="bet-names">${escapeHtml(c.names)}</div>
+            <div class="bet-meta tabular">
+              推定的中率 <strong>${c.hitPct.toFixed(1)}%</strong> ／ 推定オッズ <strong>${c.odds.toFixed(1)}倍</strong>
+            </div>
+          </div>
+          <div class="bet-right tabular">
+            <div class="bet-stake">${stakes[i].toLocaleString()}円</div>
+            <div style="margin-top:4px;">
+              <span class="ev-pill ev-green" style="min-height:28px; font-size:13px;">EV ${c.ev.toFixed(2)}</span>
+            </div>
+            <div class="bet-payout">的中時 約${payouts[i].toLocaleString()}円</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // =========================================================================
+    // 9. TAB ④: PERSONALITY & TRACK BIAS ICON CARDS + ACCORDIONS
+    // =========================================================================
+    function renderSettings() {
+      const pBox = document.getElementById('personalityCardsContainer');
+      pBox.innerHTML = PERSONALITIES.map(p => {
+        const isSel = state.personality === p.id;
+        const isOpen = !!openAccordions['p_' + p.id];
+        return `
+          <div class="choice-card ${isSel ? 'selected' : ''} ${isSel && p.caution ? 'caution' : ''}">
+            <div class="choice-header" onclick="selectPersonality('${p.id}')">
+              <div class="choice-icon" aria-hidden="true">${p.icon}</div>
+              <div style="flex:1; min-width:0;">
+                <h3 class="choice-title">${p.title}</h3>
+                <span class="choice-sub">${p.summary}</span>
+              </div>
+            </div>
+            <div class="choice-btn-row">
+              <button type="button" class="btn ${isSel ? 'btn-navy' : 'btn-navy-soft'}" onclick="selectPersonality('${p.id}')">
+                ${isSel ? '✓ 選択中' : 'この性格を選ぶ'}
+              </button>
+              <button type="button" class="btn" onclick="toggleAccordion('p_${p.id}')">
+                ${isOpen ? '閉じる ▲' : '詳細を見る ▼'}
+              </button>
+            </div>
+            <div class="accordion-panel ${isOpen ? 'open' : ''}">
+              <ul class="accordion-list">
+                <li><strong>対象レース例：</strong>${p.races}</li>
+                <li><strong>印の勝率目安：</strong><span class="tabular">${p.guide}</span></li>
+                <li><strong>重要ルール：</strong>${p.rule}</li>
+              </ul>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const bBox = document.getElementById('biasCardsContainer');
+      bBox.innerHTML = BIAS_MODES.map(b => {
+        const isSel = state.bias === b.id;
+        const isOpen = !!openAccordions['b_' + b.id];
+        return `
+          <div class="choice-card ${isSel ? 'selected' : ''}">
+            <div class="choice-header" onclick="selectBias('${b.id}')">
+              <div class="choice-icon" aria-hidden="true">${b.icon}</div>
+              <div style="flex:1; min-width:0;">
+                <h3 class="choice-title">${b.title}</h3>
+                <span class="choice-sub">${b.summary}</span>
+              </div>
+            </div>
+            <div class="choice-btn-row">
+              <button type="button" class="btn ${isSel ? 'btn-navy' : 'btn-navy-soft'}" onclick="selectBias('${b.id}')">
+                ${isSel ? '✓ 適用中' : 'この補正を選ぶ'}
+              </button>
+              <button type="button" class="btn" onclick="toggleAccordion('b_${b.id}')">
+                ${isOpen ? '閉じる ▲' : '詳細を見る ▼'}
+              </button>
+            </div>
+            <div class="accordion-panel ${isOpen ? 'open' : ''}">
+              <p style="margin:0;">${b.detail}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 10. ULTRA-CLEAR 3-TAB "📥 レース読込" MODAL ENGINE
+    // =========================================================================
+    function openImportModal(initialTab = 'paste') {
+      document.getElementById('importPasteRaceTitle').value = state.raceName;
+      document.getElementById('importManualRaceTitle').value = state.raceName;
+
+      // Clone current horses into Tab 3 manual draft
+      importModalState.manualDraft = state.horses.map(h => ({
+        num: h.num,
+        name: h.name,
+        odds: h.odds
+      }));
+
+      switchImportTab(initialTab);
+      onPasteInput();
+      onShareCodeInput();
+      renderManualDraftRows();
+      openModal('importModal');
+    }
+
+    function switchImportTab(subTab) {
+      importModalState.activeSubTab = subTab;
+      document.querySelectorAll('.import-seg-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.importTab === subTab);
+      });
+      document.querySelectorAll('.import-pane').forEach(pane => {
+        pane.classList.toggle('active', pane.id === `import-pane-${subTab}`);
+      });
+    }
+
+    // --- TAB 1: SMART REAL-TIME ODDS PARSER ---
+    function toHalfWidth(str) {
+      return str
+        .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+        .replace(/．/g, '.')
+        .replace(/\u3000/g, ' ');
+    }
+
+    const NOISE_NAME_RE = /^(枠|枠番|馬番|馬名|単勝|複勝|オッズ|人気|性齢|斤量|騎手|調教師|馬体重|予想|予想オッズ|印|取消|除外|競走除外|発走除外|\d+人気|[牡牝セ]\d+)$/;
+
+    function isLikelyHorseName(token) {
+      if (!token) return false;
+      const t = token.trim();
+      if (t.length < 2 || t.length > 18) return false;
+      if (NOISE_NAME_RE.test(t)) return false;
+      if (/^[\d.\-+()倍人気円kg]+$/.test(t)) return false;
+      // Must contain Japanese kana/kanji or English letters
+      return /[ァ-ヶー一-龠ぁ-んA-Za-z]/.test(t);
+    }
+
+    function extractOddsFromText(text) {
+      // Priority 1: explicit "○.○倍"
+      const explicitBai = text.match(/(\d{1,3}\.\d)\s*倍/);
+      if (explicitBai) {
+        const val = parseFloat(explicitBai[1]);
+        if (val >= 1.0 && val <= 999.9) return val;
+      }
+      // Remove sex/age + jockey weight pair (e.g. "牡3 56.0" or "牝4 54.0") so weight is never mistaken for odds
+      const stripped = text.replace(/[牡牝セ]\d+\s+[4-6]\d\.\d/g, ' ');
+      const matches = [...stripped.matchAll(/(?:^|[\s\t])(\d{1,3}\.\d)(?=$|[\s\t(人気倍])/g)]
+        .map(m => parseFloat(m[1]))
+        .filter(v => v >= 1.0 && v <= 999.9);
+      if (matches.length === 0) return null;
+      // Odds typically appear near the right end of a JRA/netkeiba table row
+      return matches[matches.length - 1];
+    }
+
+    function parseSmartOddsText(raw) {
+      const normalized = toHalfWidth(raw).replace(/,/g, '');
+      const rawLines = normalized.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      const result = [];
+      const seenNums = new Set();
+
+      // PASS 1: Single-line parsing (space/tab separated, optional bracket number, netkeiba/JRA rows)
+      for (const line of rawLines) {
+        if (/取消|除外/.test(line)) continue;
+        const odds = extractOddsFromText(line);
+        if (odds === null) continue;
+
+        // Tokenize by tabs or spaces
+        const tokens = line.split(/[\t\s]+/).filter(Boolean);
+        if (tokens.length < 3) continue;
+
+        let waku = null;
+        let num = null;
+        let nameIdx = -1;
+
+        const isInt1to8 = s => /^[1-8]$/.test(s);
+        const isInt1to18 = s => /^(?:[1-9]|1[0-8])$/.test(s);
+
+        // Case A: [bracket 1-8] [horseNo 1-18] [name] ...
+        if (isInt1to8(tokens[0]) && isInt1to18(tokens[1]) && isLikelyHorseName(tokens[2])) {
+          waku = parseInt(tokens[0], 10);
+          num = parseInt(tokens[1], 10);
+          nameIdx = 2;
+        }
+        // Case B: [horseNo 1-18] [name] ...
+        else if (isInt1to18(tokens[0]) && isLikelyHorseName(tokens[1])) {
+          num = parseInt(tokens[0], 10);
+          nameIdx = 1;
+        }
+        // Case C: Leading mark/symbol then [bracket?] [horseNo] [name]
+        else {
+          for (let i = 0; i < Math.min(3, tokens.length - 1); i++) {
+            const cleanNum = tokens[i].replace(/番$/, '');
+            if (isInt1to18(cleanNum) && isLikelyHorseName(tokens[i + 1])) {
+              num = parseInt(cleanNum, 10);
+              nameIdx = i + 1;
+              if (i > 0 && isInt1to8(tokens[i - 1].replace(/枠$/, ''))) {
+                waku = parseInt(tokens[i - 1].replace(/枠$/, ''), 10);
+              }
+              break;
+            }
+          }
+        }
+
+        if (num !== null && nameIdx >= 0 && !seenNums.has(num)) {
+          const horseName = tokens[nameIdx].replace(/[()（）]/g, '').trim();
+          if (isLikelyHorseName(horseName)) {
+            seenNums.add(num);
+            result.push({ num, waku, name: horseName, odds });
+          }
+        }
+      }
+
+      // PASS 2: Multi-line block parser (when JRA/netkeiba table copies cells onto adjacent lines)
+      if (result.length < 2) {
+        const multiResult = [];
+        const multiSeen = new Set();
+        const isInt1to18 = s => /^(?:[1-9]|1[0-8])$/.test(s);
+        const isInt1to8 = s => /^[1-8]$/.test(s);
+
+        let i = 0;
+        while (i < rawLines.length) {
+          const t0 = rawLines[i].replace(/[枠番]/g, '').trim();
+          if (!isInt1to18(t0)) {
+            i++;
+            continue;
+          }
+
+          let waku = null;
+          let num = parseInt(t0, 10);
+          let cursor = i + 1;
+
+          // If line i is bracket (1-8) and line i+1 is horse number (1-18), advance
+          if (cursor < rawLines.length && isInt1to8(t0)) {
+            const t1 = rawLines[cursor].replace(/番$/, '').trim();
+            if (isInt1to18(t1)) {
+              waku = num;
+              num = parseInt(t1, 10);
+              cursor++;
+            }
+          }
+
+          let foundName = null;
+          let foundOdds = null;
+          let endCursor = cursor;
+
+          for (let j = cursor; j < Math.min(rawLines.length, cursor + 7); j++) {
+            const cand = rawLines[j];
+            if (/取消|除外/.test(cand)) {
+              foundName = null;
+              foundOdds = null;
+              endCursor = j + 1;
+              break;
+            }
+            // Stop if we hit a new horse number after already finding odds
+            if (foundName && foundOdds !== null) break;
+
+            if (!foundName && isLikelyHorseName(cand)) {
+              foundName = cand.split(/[\s\t]+/)[0].replace(/[()（）]/g, '').trim();
+              endCursor = j + 1;
+              // Check if odds are also on this same line
+              const inlineOdds = extractOddsFromText(cand);
+              if (inlineOdds !== null) {
+                foundOdds = inlineOdds;
+                break;
+              }
+              continue;
+            }
+
+            if (foundName && foundOdds === null) {
+              const o = extractOddsFromText(cand);
+              if (o !== null) {
+                foundOdds = o;
+                endCursor = j + 1;
+                break;
+              }
+            }
+          }
+
+          if (foundName && foundOdds !== null && !multiSeen.has(num)) {
+            multiSeen.add(num);
+            multiResult.push({ num, waku, name: foundName, odds: foundOdds });
+            i = endCursor;
+          } else {
+            i++;
+          }
+        }
+
+        if (multiResult.length >= 2) {
+          multiResult.sort((a, b) => a.num - b.num);
+          multiResult.forEach(h => {
+            if (!h.waku) h.waku = assignWaku(h.num, multiResult.length);
+          });
+          return multiResult;
+        }
+      }
+
+      result.sort((a, b) => a.num - b.num);
+      result.forEach(h => {
+        if (!h.waku) h.waku = assignWaku(h.num, result.length);
+      });
+      return result;
+    }
+
+    function fillPasteSample() {
+      document.getElementById('importPasteRaceTitle').value = 'ジャパンカップ（東京芝2400m・お試しデータ）';
+      document.getElementById('importPasteTextarea').value = [
+        '1 1 クロワデュノール 2.8',
+        '2 2 オンブズマン 4.2',
+        '3 3 ミニーホーク 6.5',
+        '4 4 チェルヴィニア 7.8',
+        '5 5 ジャスティンパレス 10.4',
+        '6 6 シンエンペラー 12.0',
+        '7 7 ドゥレッツァ 15.6',
+        '7 8 ソールオリエンス 22.5',
+        '8 9 ダノンベルーガ 28.0',
+        '8 10 タスティエーラ 34.0'
+      ].join('\n');
+      onPasteInput();
+    }
+
+    function clearPasteArea() {
+      document.getElementById('importPasteTextarea').value = '';
+      onPasteInput();
+    }
+
+    function onPasteInput() {
+      const raw = document.getElementById('importPasteTextarea').value;
+      const previewEl = document.getElementById('pasteLivePreviewArea');
+      const applyBtn = document.getElementById('applyPasteBtn');
+
+      const parsed = parseSmartOddsText(raw);
+      importModalState.parsedPasteHorses = parsed;
+
+      if (parsed.length >= 2) {
+        const { map: mktMap } = computeMarketMapForList(parsed);
+        applyBtn.disabled = false;
+        applyBtn.textContent = `この内容でレースに反映する（${parsed.length}頭）`;
+
+        const rowsHtml = parsed.map(h => `
+          <div class="preview-list-row tabular">
+            <span>[${h.num}] ${escapeHtml(h.name)}</span>
+            <span style="color:var(--text-sub);">単勝 ${h.odds.toFixed(1)}倍 ｜ 市場勝率 ${(mktMap[h.num] || 0).toFixed(1)}%</span>
+          </div>
+        `).join('');
+
+        previewEl.innerHTML = `
+          <div class="notice-box notice-green" style="margin-bottom:0;">
+            ✅ ${parsed.length}頭を認識しました！（内容を確認して下のボタンで反映）
+          </div>
+          <div class="preview-list-box">${rowsHtml}</div>
+        `;
+      } else {
+        applyBtn.disabled = true;
+        applyBtn.textContent = 'この内容でレースに反映する（0頭）';
+
+        const hintText = raw.trim().length === 0
+          ? '💡 「馬番 馬名 オッズ」の順で1行ずつ、またはJRA・netkeibaの単勝オッズ表をそのまま貼り付けると、ここに自動でプレビューが出ます。'
+          : '💡 まだ2頭以上を読み取れていません。「1 クロワデュノール 2.8」のように、馬番・馬名・小数点つきオッズを含めて貼り付けてください。';
+
+        previewEl.innerHTML = `
+          <div class="notice-box notice-amber" style="margin-bottom:0;">
+            ${hintText}
+          </div>
+        `;
+      }
+    }
+
+    function applyParsedOdds() {
+      const parsed = importModalState.parsedPasteHorses;
+      if (!parsed || parsed.length < 2) return;
+
+      const customTitle = document.getElementById('importPasteRaceTitle').value.trim();
+      const { map: mktMap } = computeMarketMapForList(parsed);
+
+      const newHorses = parsed.map(h => ({
+        num: h.num,
+        waku: h.waku || assignWaku(h.num, parsed.length),
+        name: h.name,
+        mark: '消',
+        odds: h.odds,
+        customWin: +(mktMap[h.num] || 0).toFixed(1),
+        style: '差し',
+        tags: h.odds <= 3.0 ? ['過剰人気(削)'] : []
+      }));
+
+      // Assign helpful initial marks sorted by odds
+      const byOdds = [...newHorses].sort((a, b) => a.odds - b.odds);
+      const initMarks = ['◎', '○', '▲', '△', '△', '☆', '☆', '✓', '✓', '✓', '✓'];
+      byOdds.forEach((h, idx) => {
+        h.mark = initMarks[idx] || '消';
+      });
+
+      state.horses = newHorses;
+      if (customTitle) state.raceName = customTitle;
+      state.selectedChartHorse = newHorses[0].num;
+
+      normalizeCustomWins(true);
+      closeModal('importModal');
+      switchTab('tab-horses');
+      showToast(`✅ ${newHorses.length}頭分のレースデータを反映しました！`);
+    }
+
+    // --- TAB 2: SHARE CODE LIVE VALIDATION ---
+    function extractSharePayload(text) {
+      const codeMatch = text.match(/TRICK_LOGIC_SHARE:([A-Za-z0-9+/=]+)/);
+      if (codeMatch) return codeMatch[1];
+      const urlMatch = text.match(/#tl=([A-Za-z0-9+/=]+)/);
+      if (urlMatch) return urlMatch[1];
+      return null;
+    }
+
+    function decodeShareObject(b64) {
+      try {
+        const obj = JSON.parse(base64ToUtf8(b64));
+        if (!obj || !Array.isArray(obj.hs) || obj.hs.length === 0) return null;
+        return obj;
+      } catch (err) {
+        return null;
+      }
+    }
+
+    function clearShareImportArea() {
+      document.getElementById('importShareTextarea').value = '';
+      onShareCodeInput();
+    }
+
+    function onShareCodeInput() {
+      const raw = document.getElementById('importShareTextarea').value.trim();
+      const previewEl = document.getElementById('shareLivePreviewArea');
+      const applyBtn = document.getElementById('applyShareBtn');
+
+      if (!raw) {
+        importModalState.decodedShareObj = null;
+        applyBtn.disabled = true;
+        previewEl.innerHTML = '';
+        return;
+      }
+
+      const b64 = extractSharePayload(raw);
+      const decoded = b64 ? decodeShareObject(b64) : null;
+      importModalState.decodedShareObj = decoded;
+
+      if (decoded) {
+        applyBtn.disabled = false;
+        const pObj = PERSONALITIES.find(p => p.id === decoded.p) || PERSONALITIES[1];
+        const budgetVal = typeof decoded.bg === 'number' ? decoded.bg : 2000;
+        const rName = decoded.r || '名称未設定レース';
+
+        previewEl.innerHTML = `
+          <div class="share-preview-card">
+            <div class="share-preview-title">✅ 共有データを認識しました！</div>
+            <div class="share-preview-grid tabular">
+              <div class="share-preview-item" style="grid-column: 1 / -1;">
+                <span class="share-preview-k">レース名</span>
+                <span class="share-preview-v">${escapeHtml(rName)}</span>
+              </div>
+              <div class="share-preview-item">
+                <span class="share-preview-k">登録頭数</span>
+                <span class="share-preview-v">${decoded.hs.length}頭</span>
+              </div>
+              <div class="share-preview-item">
+                <span class="share-preview-k">総予算</span>
+                <span class="share-preview-v">${budgetVal.toLocaleString()}円</span>
+              </div>
+              <div class="share-preview-item" style="grid-column: 1 / -1;">
+                <span class="share-preview-k">レース性格</span>
+                <span class="share-preview-v">${pObj.icon} ${pObj.shortName}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        applyBtn.disabled = true;
+        previewEl.innerHTML = `
+          <div class="notice-box notice-burgundy" style="margin-top:12px;">
+            共有コードを読み取れませんでした。「TRICK_LOGIC_SHARE:...」または「#tl=...」を含む文章を途中まで切れずに貼り付けているかご確認ください。
+          </div>
+        `;
+      }
+    }
+
+    function applySharedCodeImport() {
+      const obj = importModalState.decodedShareObj;
+      if (!obj) return;
+      if (applyDecodedStateObject(obj)) {
+        closeModal('importModal');
+        switchTab('tab-horses');
+        showToast('✅ 共有データを読み込みました！');
+      }
+    }
+
+    // --- TAB 3: MANUAL ENTRY EDITOR ---
+    function renderManualDraftRows() {
+      const box = document.getElementById('manualDraftList');
+      const draft = importModalState.manualDraft;
+
+      if (draft.length === 0) {
+        box.innerHTML = `
+          <div class="notice-box notice-amber" style="margin-bottom:0;">
+            リストが空です。下の「＋ 馬を1頭追加」ボタンを押して出走馬を追加してください。
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = draft.map((row, idx) => `
+        <div class="manual-row" data-manual-idx="${idx}">
+          <div class="manual-row-top">
+            <input type="number" class="manual-num-input tabular" min="1" max="18"
+              aria-label="馬番" placeholder="番" value="${row.num}"
+              oninput="updateManualDraftField(${idx}, 'num', this.value)" />
+            <input type="text" class="manual-name-input"
+              aria-label="馬名" placeholder="馬名を入力（例：クロワデュノール）" value="${escapeHtml(row.name)}"
+              oninput="updateManualDraftField(${idx}, 'name', this.value)" />
+            <button type="button" class="manual-del-btn" aria-label="この行を削除" onclick="deleteManualDraftRow(${idx})">✕</button>
+          </div>
+          <div class="manual-row-bottom">
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:13px; font-weight:700; color:var(--text-sub);">単勝</span>
+              <input type="number" class="manual-odds-input tabular" step="0.1" min="1.0"
+                aria-label="単勝オッズ" placeholder="例: 3.5" value="${row.odds !== '' ? row.odds : ''}"
+                oninput="updateManualDraftField(${idx}, 'odds', this.value)" />
+              <span style="font-size:14px; font-weight:700; color:var(--text-sub);">倍</span>
+            </div>
+            <span class="manual-mkt-pill tabular" id="manual-mkt-${idx}">市場勝率 --.-%</span>
+          </div>
+        </div>
+      `).join('');
+
+      refreshManualMarketLabels();
+    }
+
+    function updateManualDraftField(idx, field, val) {
+      const row = importModalState.manualDraft[idx];
+      if (!row) return;
+      if (field === 'num') {
+        const n = parseInt(val, 10);
+        row.num = isNaN(n) ? '' : Math.max(1, Math.min(18, n));
+      } else if (field === 'name') {
+        row.name = val;
+      } else if (field === 'odds') {
+        const o = parseFloat(val);
+        row.odds = isNaN(o) ? '' : o;
+      }
+      refreshManualMarketLabels();
+    }
+
+    function refreshManualMarketLabels() {
+      const draft = importModalState.manualDraft;
+      const raw = draft.map(r => (typeof r.odds === 'number' && r.odds >= 1.0 ? 80 / r.odds : 0));
+      const sumRaw = raw.reduce((a, b) => a + b, 0);
+
+      draft.forEach((r, idx) => {
+        const el = document.getElementById(`manual-mkt-${idx}`);
+        if (!el) return;
+        if (sumRaw > 0 && raw[idx] > 0) {
+          const pct = (raw[idx] / sumRaw) * 100;
+          el.textContent = `市場勝率 ${pct.toFixed(1)}%`;
+        } else {
+          el.textContent = '市場勝率 --.-%';
+        }
+      });
+    }
+
+    function addManualDraftRow() {
+      const draft = importModalState.manualDraft;
+      const maxNum = draft.reduce((m, r) => Math.max(m, Number(r.num) || 0), 0);
+      const nextNum = Math.min(18, maxNum + 1);
+      draft.push({ num: nextNum, name: '', odds: '' });
+      renderManualDraftRows();
+
+      const listEl = document.getElementById('manualDraftList');
+      listEl.scrollTop = listEl.scrollHeight;
+      const lastInput = listEl.querySelector(`.manual-row[data-manual-idx="${draft.length - 1}"] .manual-name-input`);
+      if (lastInput) lastInput.focus();
+    }
+
+    function deleteManualDraftRow(idx) {
+      importModalState.manualDraft.splice(idx, 1);
+      renderManualDraftRows();
+    }
+
+    function clearManualDraft() {
+      importModalState.manualDraft = [];
+      renderManualDraftRows();
+      showToast('手入力リストを空にしました');
+    }
+
+    function applyManualDraft() {
+      const valid = [];
+      const seen = new Set();
+
+      importModalState.manualDraft.forEach((r, i) => {
+        const name = String(r.name || '').trim();
+        const odds = parseFloat(r.odds);
+        let num = parseInt(r.num, 10);
+        if (isNaN(num) || num < 1 || num > 18) num = i + 1;
+        while (seen.has(num) && num < 18) num++;
+        if (name && !isNaN(odds) && odds >= 1.0 && !seen.has(num)) {
+          seen.add(num);
+          valid.push({ num, name, odds: +odds.toFixed(1) });
+        }
+      });
+
+      if (valid.length < 2) {
+        showToast('馬名とオッズ（1.0倍以上）を2頭以上入力してください');
+        return;
+      }
+
+      valid.sort((a, b) => a.num - b.num);
+      const { map: mktMap } = computeMarketMapForList(valid);
+      const oldByName = new Map(state.horses.map(h => [h.name, h]));
+
+      const nextHorses = valid.map(v => {
+        const prev = oldByName.get(v.name);
+        return {
+          num: v.num,
+          waku: assignWaku(v.num, valid.length),
+          name: v.name,
+          mark: prev ? prev.mark : '消',
+          odds: v.odds,
+          customWin: prev ? prev.customWin : +(mktMap[v.num] || 0).toFixed(1),
+          style: prev ? prev.style : '差し',
+          tags: prev ? [...(prev.tags || [])] : (v.odds <= 3.0 ? ['過剰人気(削)'] : [])
+        };
+      });
+
+      // Ensure marks exist if brand new list
+      const activeMarks = nextHorses.filter(h => h.mark && h.mark !== '消').length;
+      if (activeMarks < 2) {
+        const byOdds = [...nextHorses].sort((a, b) => a.odds - b.odds);
+        const initMarks = ['◎', '○', '▲', '△', '△', '☆', '☆', '✓', '✓', '✓', '✓'];
+        byOdds.forEach((h, idx) => { h.mark = initMarks[idx] || '消'; });
+      }
+
+      const customTitle = document.getElementById('importManualRaceTitle').value.trim();
+      if (customTitle) state.raceName = customTitle;
+      state.horses = nextHorses;
+      state.selectedChartHorse = nextHorses[0].num;
+
+      normalizeCustomWins(true);
+      closeModal('importModal');
+      switchTab('tab-horses');
+      showToast(`✅ 手入力の出走表（${nextHorses.length}頭）を反映しました`);
+    }
+
+    // =========================================================================
+    // 11. 7-TOPIC HELP SHEET MODAL
+    // =========================================================================
+    function openHelp(topicKey) {
+      const topic = HELP_TOPICS[topicKey] || HELP_TOPICS.howto;
+      document.getElementById('helpModalTitle').textContent = `？ ${topic.title}`;
+      document.getElementById('helpModalContent').innerHTML = `
+        ${topic.body}
+        <div class="help-example">${topic.example}</div>
+      `;
+
+      const others = document.getElementById('helpOtherTopics');
+      others.innerHTML = Object.keys(HELP_TOPICS)
+        .filter(k => k !== topicKey)
+        .map(k => `<button type="button" class="btn" style="justify-content:flex-start; font-size:14px;" onclick="openHelp('${k}')">${HELP_TOPICS[k].title}</button>`)
+        .join('');
+
+      openModal('helpModal');
+    }
+
+    // =========================================================================
+    // 12. UTF-8 SAFE SHARE ENCODING / DECODING & WEB SHARE API
+    // =========================================================================
+    function utf8ToBase64(str) {
+      const bytes = new TextEncoder().encode(str);
+      let bin = '';
+      bytes.forEach(b => { bin += String.fromCharCode(b); });
+      return btoa(bin);
+    }
+
+    function base64ToUtf8(b64) {
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    function encodeCurrentState() {
+      const compact = {
+        r: state.raceName,
+        p: state.personality,
+        b: state.bias,
+        bt: state.betType,
+        bg: state.budget,
+        ev: state.minEv,
+        ht: state.minHit,
+        hs: state.horses.map(h => [
+          h.num, h.waku, h.name, h.mark, h.odds, h.customWin, h.style, h.tags || []
+        ])
+      };
+      return utf8ToBase64(JSON.stringify(compact));
+    }
+
+    function applyDecodedStateObject(obj) {
+      try {
+        if (!obj || !Array.isArray(obj.hs) || obj.hs.length === 0) return false;
+        state.raceName = obj.r || state.raceName;
+        state.personality = obj.p || 'convergent';
+        state.bias = obj.b || 'standard';
+        state.betType = obj.bt || 'quinella';
+        state.budget = typeof obj.bg === 'number' ? obj.bg : 2000;
+        state.minEv = typeof obj.ev === 'number' ? obj.ev : 1.20;
+        state.minHit = typeof obj.ht === 'number' ? obj.ht : 1.0;
+        state.horses = obj.hs.map(a => ({
+          num: a[0],
+          waku: a[1] || 1,
+          name: a[2],
+          mark: a[3] || '消',
+          odds: a[4],
+          customWin: a[5],
+          style: a[6] || '差し',
+          tags: Array.isArray(a[7]) ? a[7] : []
+        }));
+        state.selectedChartHorse = state.horses[0].num;
+        renderAll();
+        return true;
+      } catch (err) {
+        console.error('State restore failed:', err);
+        return false;
+      }
+    }
+
+    function checkUrlHash() {
+      const hash = window.location.hash || '';
+      if (hash.startsWith('#tl=')) {
+        const decoded = decodeShareObject(hash.slice(4));
+        if (decoded && applyDecodedStateObject(decoded)) {
+          showToast('共有リンクから設定を読み込みました');
+        }
+      }
+    }
+
+    function openShareModal() {
+      const encoded = encodeCurrentState();
+      const shareCode = `TRICK_LOGIC_SHARE:${encoded}`;
+      let output = shareCode;
+
+      if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+        const base = window.location.href.split('#')[0];
+        output = `${base}#tl=${encoded}\n\n${shareCode}`;
+      }
+
+      const ta = document.getElementById('shareOutputTextarea');
+      ta.value = output;
+
+      const nativeBtn = document.getElementById('nativeShareBtn');
+      nativeBtn.style.display = navigator.share ? 'inline-flex' : 'none';
+
+      openModal('shareModal');
+      setTimeout(() => {
+        ta.focus();
+        ta.select();
+      }, 60);
+    }
+
+    function copyShareCode() {
+      const ta = document.getElementById('shareOutputTextarea');
+      ta.focus();
+      ta.select();
+      ta.setSelectionRange(0, 99999);
+      try {
+        document.execCommand('copy');
+        showToast('コピーしました！LINE等に貼り付けて送れます');
+      } catch (err) {
+        showToast('文字を選択しました。手動でコピーしてください');
+      }
+    }
+
+    function shareViaNative() {
+      const text = document.getElementById('shareOutputTextarea').value;
+      if (navigator.share) {
+        navigator.share({
+          title: `TRICK LOGIC｜${state.raceName}`,
+          text: text
+        }).catch(() => {});
+      }
+    }
+  </script>
+</body>
+</html>
