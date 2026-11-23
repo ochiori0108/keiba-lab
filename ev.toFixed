@@ -805,6 +805,35 @@
     .toast.show {
       display: block;
     }
+.ev-pill-lg {
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+}
+.ev-num-big {
+  font-size: 18px;
+  font-weight: 900;
+}
+.ev-hot {
+  background: var(--bg-soft-green);
+  color: var(--green);
+  border: 1.5px solid #22C55E;
+}
+.ev-normal {
+  background: var(--bg-soft-blue);
+  color: var(--navy);
+  border: 1.5px solid #93C5FD;
+}
+.ev-under {
+  background: var(--bg-soft-red);
+  color: var(--red);
+  border: 1.5px solid #F87171;
+}    
   </style>
 </head>
 <body>
@@ -1326,16 +1355,25 @@
       const odds = Number(h.odds) || 1;
       const ev = (win / 100) * odds;
       const diff = win - mkt;
+      const neraiMeLine = 1.05;
 
       let evClass = "ev-mid";
-      let evText = "EV " + ev.toFixed(2) + " 適正";
+      let evIcon = "⚖️";
+      let evLabel = "適正";
       if (ev >= 1.15) {
         evClass = "ev-good";
-        evText = "EV " + ev.toFixed(2) + " 割安";
+        evIcon = "🔥";
+        evLabel = "割安";
+      } else if (ev >= neraiMeLine) {
+        evClass = "ev-mid";
+        evIcon = "🎯";
+        evLabel = "適正・狙い目";
       } else if (ev < 0.85) {
         evClass = "ev-bad";
-        evText = "EV " + ev.toFixed(2) + " 割高";
+        evIcon = "⚠️";
+        evLabel = "割高";
       }
+      const evText = `${evIcon} EV <strong style="font-size:15px;">${ev.toFixed(2)}</strong> ${evLabel}`;
 
       const diffStr = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%";
       const diffColor = diff >= 1.5 ? "var(--green)" : (diff <= -1.5 ? "var(--red)" : "var(--text-sub)");
@@ -1358,7 +1396,9 @@
               <span class="horse-num">${h.num}</span>
               <h3 class="horse-name">${escapeHtml(h.name)}</h3>
             </div>
-            <span class="ev-pill ${evClass}">${evText}</span>
+            <span class="ev-pill ${evClass}" style="font-size:13px;font-weight:800;">
+  ${evIcon} EV <strong style="font-size:15px;">${ev.toFixed(2)}</strong> ${evLabel}
+</span>
           </div>
 
           <div class="mark-row" role="group" aria-label="${escapeHtml(h.name)}の印">${markButtons}</div>
@@ -1491,12 +1531,23 @@
       const tagLabels = (h.tags || []).map(k => {
         const found = TAGS.find(t => t.key === k);
         return found ? found.label : k;
-      }).join(" / ") || "なし";
-      const verdict = ev >= 1.15 ? "割安ゾーン（狙い目）" : (ev < 0.85 ? "割高・過剰人気注意" : "適正〜様子見ゾーン");
+      }).join(" / ") || "なし"
 
       detailBox.innerHTML = `
         <strong>${h.num}番 ${escapeHtml(h.name)}（印：${h.mark}）</strong> — <strong>${verdict}</strong><br>
-        単勝オッズ <strong>${odds.toFixed(1)}倍</strong> ／ 独自勝率 <strong>${win.toFixed(1)}%</strong>（市場基準 ${mkt.toFixed(1)}%、差 ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%）／ <strong>単EV ${ev.toFixed(2)}</strong><br>
+        単勝オッズ <strong>${odds.toFixed(1)}倍</strong> ／ 独自勝率 <strong>${win.toFixed(1)}%</strong>（市const neraiMin = 1.05; // 適正ゾーン内の「狙い目」ライン（必要に応じて調整可）
+      let verdict = "⚖️ 適正ゾーン";
+      if (ev >= 1.15) {
+        verdict = "🔥 割安ゾーン（狙い目）";
+      } else if (ev >= neraiMin) {
+        verdict = "🎯 適正・狙い目ゾーン";
+      } else if (ev < 0.85) {
+        verdict = "⚠️ 割高・過剰人気注意";
+      }
+
+      detailBox.innerHTML = `
+        <strong>${h.num}番 ${escapeHtml(h.name)}（印：${h.mark}）</strong> — <strong>${verdict}</strong><br>
+        単勝オッズ <strong>${odds.toFixed(1)}倍</strong> ／ 独自勝率 <strong>${win.toFixed(1)}%</strong>（市場基準 ${mkt.toFixed(1)}%、差 ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%）／ <strong>単EV <span style="font-size:16px;font-weight:900;">${ev.toFixed(2)}</span></strong><br>
         根拠タグ：${escapeHtml(tagLabels)}
       `;
     }
@@ -1751,6 +1802,63 @@
     return items.map((it, idx) => ({ ...it, stake: counts[idx] * 100 }));
   }
 
+const NERAI_EV_MIN = 1.05; // 適正ゾーン内の「狙い目」ライン（必要に応じて調整可）
+
+  function getEvMeta(evVal) {
+    if (evVal >= 1.15) {
+      return {
+        tier: "bargain",
+        label: "割安",
+        icon: "🔥",
+        pillClass: "ev-good",
+        badgeBg: "#ECFDF5",
+        badgeColor: "#166534",
+        badgeBorder: "#22C55E"
+      };
+    }
+    if (evVal >= NERAI_EV_MIN) {
+      return {
+        tier: "nerai",
+        label: "適正・狙い目",
+        icon: "🎯",
+        pillClass: "ev-mid",
+        badgeBg: "#EFF6FF",
+        badgeColor: "#1D4ED8",
+        badgeBorder: "#60A5FA"
+      };
+    }
+    if (evVal < 0.85) {
+      return {
+        tier: "overpriced",
+        label: "割高",
+        icon: "⚠️",
+        pillClass: "ev-bad",
+        badgeBg: "#FEF2F2",
+        badgeColor: "#991B1B",
+        badgeBorder: "#F87171"
+      };
+    }
+    return {
+      tier: "fair",
+      label: "適正",
+      icon: "⚖️",
+      pillClass: "ev-mid",
+      badgeBg: "#F3F4F6",
+      badgeColor: "#374151",
+      badgeBorder: "#CBD5E1"
+    };
+  }
+
+  function formatEvDisplay(evVal) {
+    const m = getEvMeta(evVal);
+    return `<span class="ev-pill ${m.pillClass}" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;background:${m.badgeBg};color:${m.badgeColor};border:1px solid ${m.badgeBorder};font-weight:700;font-size:12px;">` +
+      `<span>${m.icon}</span>` +
+      `<span>EV</span>` +
+      `<strong style="font-size:15px;font-weight:900;letter-spacing:0.01em;">${evVal.toFixed(2)}</strong>` +
+      `<span>${m.label}</span>` +
+      `</span>`;
+  }
+  
   function renderBets() {
     const minEv = Number(state.minEv) || 1.0;
     const minHitPct = Number(state.minHit) || 0;
