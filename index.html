@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="競馬観測LAB">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-  <title>TRICK LOGIC｜競馬観測LAB（やさしいライト版）</title>
+  <title>TRICK LOGIC｜競馬観測LAB（やさしいライト版 v1.2）</title>
   <style>
     :root {
       --bg-page: #F6F5F0;
@@ -272,6 +272,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
     .horse-num {
@@ -292,6 +293,30 @@
       margin: 0;
       font-size: 19px;
       font-weight: 700;
+    }
+
+    .pop-chip {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 2px 8px;
+    }
+
+    .himo-warn-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--bg-soft-amber);
+      color: var(--amber);
+      border: 1.5px solid #F59E0B;
+      margin-bottom: 8px;
     }
 
     .ev-pill {
@@ -550,7 +575,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .bet-type-btn {
@@ -562,6 +587,24 @@
       background: var(--navy);
       color: #FFFFFF;
       border-color: var(--navy);
+    }
+
+    .bet-summary-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .empty-bet-box {
+      background: var(--bg-soft-amber);
+      border: 1px solid #FCD34D;
+      border-radius: 10px;
+      padding: 14px;
+      font-size: 14px;
+      color: var(--text-main);
     }
 
     .bet-table-wrap {
@@ -1022,7 +1065,12 @@
         <button type="button" class="bet-type-btn" data-type="trifecta">3連単</button>
       </div>
 
-      <div class="card-desc" id="betSummaryLine">抽出買い目：0点 / 配分合計：0円</div>
+      <div class="bet-summary-row">
+        <div class="card-desc" id="betSummaryLine" style="margin:0;">抽出買い目：0点 / 配分合計：0円</div>
+        <button type="button" class="btn-secondary" id="btnCopyBets">📋 買い目をテキストコピー</button>
+      </div>
+
+      <div id="betEmptyGuide" style="display:none;margin-bottom:12px;"></div>
 
       <div class="bet-table-wrap">
         <table class="bet-table">
@@ -1193,6 +1241,14 @@
   const NERAI_EV_MIN = 1.05; // 適正ゾーン内の「狙い目」ライン
   const CUSTOM_STORAGE_KEY = "trick_logic_custom_presets_v1";
   const MARKS = ["◎", "○", "▲", "△", "☆", "✓", "消"];
+  const BET_TYPE_LABELS = {
+    wide: "ワイド",
+    quinella: "馬連",
+    win: "単勝",
+    trio: "3連複",
+    trifecta: "3連単"
+  };
+
   const TAGS = [
     { key: "枠", label: "有利枠" },
     { key: "不利", label: "前走不利" },
@@ -1396,12 +1452,12 @@
     selectedRadarNum: 3,
     selectedDriftNum: 5,
     horses: [
-      { num: 1, name: "クロワデュノール", mark: "○", odds: 2.8, oddsHistory: [2.7, 2.8, 2.8], winPct: 20.0, tags: ["時計"] },
+      { num: 1, name: "クロワデュノール", mark: "○", odds: 2.8, oddsHistory: [2.7, 2.8, 2.8], winPct: 19.0, tags: ["時計"] },
       { num: 2, name: "オンブズマン", mark: "◎", odds: 4.2, oddsHistory: [4.5, 4.3, 4.2], winPct: 26.0, tags: ["海外", "時計"] },
-      { num: 3, name: "ミニーホーク", mark: "▲", odds: 6.5, oddsHistory: [6.0, 6.2, 6.5], winPct: 19.0, tags: ["海外", "反発"] },
+      { num: 3, name: "ミニーホーク", mark: "▲", odds: 6.5, oddsHistory: [6.0, 6.2, 6.5], winPct: 20.0, tags: ["海外", "反発"] },
       { num: 4, name: "チェルヴィニア", mark: "△", odds: 7.8, oddsHistory: [7.2, 7.5, 7.8], winPct: 7.0, tags: [] },
-      { num: 5, name: "ジャスティンパレス", mark: "△", odds: 10.4, oddsHistory: [8.4, 9.1, 10.4], winPct: 12.0, tags: ["時計", "反発"] },
-      { num: 6, name: "シンエンペラー", mark: "☆", odds: 12.0, oddsHistory: [11.5, 11.8, 12.0], winPct: 6.5, tags: ["枠"] },
+      { num: 5, name: "ジャスティンパレス", mark: "△", odds: 10.4, oddsHistory: [8.4, 9.1, 10.4], winPct: 12.5, tags: ["時計", "反発"] },
+      { num: 6, name: "シンエンペラー", mark: "☆", odds: 12.0, oddsHistory: [11.5, 11.8, 12.0], winPct: 6.0, tags: ["枠"] },
       { num: 7, name: "ドゥレッツァ", mark: "☆", odds: 15.6, oddsHistory: [14.0, 15.0, 15.6], winPct: 4.5, tags: [] },
       { num: 8, name: "ソールオリエンス", mark: "✓", odds: 22.5, oddsHistory: [20.0, 21.5, 22.5], winPct: 2.0, tags: [] },
       { num: 9, name: "ダノンベルーガ", mark: "✓", odds: 28.0, oddsHistory: [25.0, 26.5, 28.0], winPct: 1.5, tags: [] },
@@ -1415,6 +1471,7 @@
 
   let state = cloneState(INITIAL_STATE);
   let customSlots = loadCustomSlots();
+  let lastAllocatedBets = [];
 
   function showToast(msg) {
     const el = document.getElementById("toast");
@@ -1457,6 +1514,16 @@
     const sum = raws.reduce((a, b) => a + b, 0);
     if (sum <= 0) return horses.map(() => 0);
     return raws.map(r => (r / sum) * 100);
+  }
+
+  function computePopularityRanks(horses) {
+    const indexed = horses.map((h, i) => ({ i, odds: Number(h.odds) || 9999 }));
+    indexed.sort((a, b) => a.odds - b.odds);
+    const ranks = new Array(horses.length).fill(0);
+    indexed.forEach((item, pos) => {
+      ranks[item.i] = pos + 1;
+    });
+    return ranks;
   }
 
   function getTotalWinPct() {
@@ -1506,6 +1573,7 @@
   function renderHorses() {
     const container = document.getElementById("horseList");
     const mktProbs = computeMarketProbs(state.horses);
+    const popRanks = computePopularityRanks(state.horses);
 
     if (!state.horses.length) {
       container.innerHTML = `<div class="card"><p class="card-desc">出走馬がありません。上の「📥 レース読込」からオッズ表を貼り付けるか、手入力で追加してください。</p></div>`;
@@ -1514,6 +1582,7 @@
 
     container.innerHTML = state.horses.map((h, idx) => {
       const mkt = mktProbs[idx] || 0;
+      const popRank = popRanks[idx] || 0;
       const win = Number(h.winPct) || 0;
       const odds = Number(h.odds) || 1;
       const ev = (win / 100) * odds;
@@ -1521,6 +1590,11 @@
 
       const diffStr = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%";
       const diffColor = diff >= 1.5 ? "var(--green)" : (diff <= -1.5 ? "var(--red)" : "var(--text-sub)");
+
+      const showHimoWarn = popRank >= 4 && popRank <= 6 && win < 10.0;
+      const himoWarnHtml = showHimoWarn
+        ? `<div class="himo-warn-pill">⚠️ 連系ヒモ抜け注意（${popRank}番人気・10%未満）</div>`
+        : "";
 
       const markButtons = MARKS.map(m => {
         const active = h.mark === m ? "active" : "";
@@ -1539,12 +1613,15 @@
             <div class="horse-name-wrap">
               <span class="horse-num">${h.num}</span>
               <h3 class="horse-name">${escapeHtml(h.name)}</h3>
+              <span class="pop-chip">${popRank}人気</span>
             </div>
             <div style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;">
               ${formatEvDisplay(ev)}
               <button type="button" class="btn-help" data-help="ev" aria-label="期待値EVの説明">？</button>
             </div>
           </div>
+
+          ${himoWarnHtml}
 
           <div class="mark-row" role="group" aria-label="${escapeHtml(h.name)}の印">${markButtons}</div>
 
@@ -1972,19 +2049,41 @@
 
     candidates.sort((a, b) => b.ev - a.ev);
     const allocated = allocateDutching(candidates.slice(0, 20), budget);
+    lastAllocatedBets = allocated;
 
     const totalStake = allocated.reduce((s, x) => s + x.stake, 0);
     document.getElementById("betSummaryLine").textContent =
       `抽出買い目：${allocated.length}点 / 配分合計：${totalStake.toLocaleString()}円（予算 ${budget.toLocaleString()}円）`;
 
+    const emptyGuide = document.getElementById("betEmptyGuide");
     const tbody = document.getElementById("betTableBody");
     const mobileBox = document.getElementById("betCardsMobile");
 
     if (!allocated.length) {
-      tbody.innerHTML = `<tr><td colspan="7">条件を満たす買い目がありません。最低EVや的中率足切りを少し緩めてみてください。</td></tr>`;
-      mobileBox.innerHTML = `<div class="card-desc">条件を満たす買い目がありません。</div>`;
+      emptyGuide.style.display = "block";
+      emptyGuide.innerHTML = `
+        <div class="empty-bet-box">
+          <strong>今の条件（EV ${minEv.toFixed(2)}以上 ／ 的中率 ${minHitPct.toFixed(1)}%以上）を満たす買い目が0点やで。</strong><br>
+          見送り（ケン）の判断もアリやし、狙い目ライン（EV 1.05）まで緩めて候補を見ることもできるよ。
+          <div style="margin-top:8px;">
+            <button type="button" class="btn-primary" id="btnRelaxEv">最低EVを 1.05 に緩めて見る</button>
+          </div>
+        </div>
+      `;
+      document.getElementById("btnRelaxEv").addEventListener("click", () => {
+        state.minEv = 1.05;
+        minEvInput.value = "1.05";
+        minEvRange.value = "1.05";
+        renderBets();
+        showToast("最低EVを1.05に緩めたで");
+      });
+      tbody.innerHTML = "";
+      mobileBox.innerHTML = "";
       return;
     }
+
+    emptyGuide.style.display = "none";
+    emptyGuide.innerHTML = "";
 
     tbody.innerHTML = allocated.map((item, idx) => {
       const payout = Math.round(item.stake * item.oddsEst);
@@ -2316,6 +2415,24 @@
     applyPresetWeights();
     renderAll();
     showToast("印に合わせて勝率を自動配分したで");
+  });
+
+  // 買い目テキストコピー
+  document.getElementById("btnCopyBets").addEventListener("click", () => {
+    if (!lastAllocatedBets.length) {
+      showToast("コピーできる買い目が0点やで");
+      return;
+    }
+    const typeName = BET_TYPE_LABELS[state.betType] || state.betType;
+    const totalStake = lastAllocatedBets.reduce((s, x) => s + x.stake, 0);
+    const lines = [
+      `【TRICK LOGIC 抽出｜${typeName}】${state.raceTitle}`,
+      `条件：EV ${Number(state.minEv).toFixed(2)}以上 / 的中率 ${Number(state.minHit).toFixed(1)}%以上 / 計${totalStake.toLocaleString()}円`,
+      ...lastAllocatedBets.map((it, i) =>
+        `#${i + 1} ${it.label}｜EV ${it.ev.toFixed(2)}｜目安${it.oddsEst.toFixed(1)}倍｜${it.stake.toLocaleString()}円`
+      )
+    ];
+    copyText(lines.join("\n"), "買い目リストをコピーしたで");
   });
 
   // フィルター・予算・券種
