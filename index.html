@@ -11,7 +11,7 @@
   <meta name="apple-mobile-web-app-title" content="競馬観測LAB">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-  <title>TRICK LOGIC｜競馬観測LAB（やさしいライト版 v1.2）</title>
+  <title>TRICK LOGIC｜競馬観測LAB（やさしいライト版 v1.3）</title>
   <style>
     :root {
       --bg-page: #F6F5F0;
@@ -430,12 +430,6 @@
       font-weight: 700;
     }
 
-    .diff-label {
-      font-size: 14px;
-      font-weight: 700;
-      margin-left: 6px;
-    }
-
     .win-adjust {
       display: flex;
       align-items: center;
@@ -450,8 +444,8 @@
       background: var(--bg-subtle);
     }
 
-    .win-input {
-      width: 78px;
+    .delta-input {
+      width: 86px;
       height: 44px;
       font-size: 19px;
       font-weight: 700;
@@ -459,6 +453,246 @@
       border: 1px solid var(--border-strong);
       border-radius: 8px;
       background: #FFFFFF;
+    }
+
+    .allocation-controls, .horse-guard-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      align-items: center;
+    }
+
+    .allocation-controls label, .horse-guard-controls label {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      font-weight: 700;
+    }
+
+    .allocation-controls label {
+      padding: 8px 0;
+    }
+
+    .horse-guard-controls {
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+
+    .horse-guard-controls label:has(input:disabled) {
+      opacity: 0.7;
+    }
+
+    .allocation-controls input, .horse-guard-controls input {
+      width: 17px;
+      height: 17px;
+      margin: 0;
+      accent-color: var(--green-mid);
+    }
+
+    .allocation-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .allocation-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .allocation-table th, .allocation-table td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .allocation-table thead, .allocation-table tfoot {
+      background: var(--bg-soft-blue);
+      color: var(--navy);
+    }
+
+    .allocation-table tfoot :is(th, td) {
+      border-bottom: 0;
+    }
+
+    .allocation-table tbody tr:nth-child(even) {
+      background: #F8FAFC;
+    }
+
+    .allocation-table .numeric {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .allocation-table .horse-guard-controls {
+      margin-top: 4px;
+    }
+
+    .allocation-table :is(.odds-input, .delta-input, .step-btn) {
+      font-size: 14px;
+      height: 34px;
+      min-height: 34px;
+    }
+
+    .allocation-table .odds-input { width: 68px; }
+    .allocation-table .delta-input { width: 67px; }
+    .allocation-table .step-btn { width: 28px; }
+    .allocation-table .win-adjust { gap: 4px; }
+    .allocation-table .reason-input { min-width: 110px; font-size: 13px; }
+
+    .allocation-detail, .allocation-error {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .allocation-detail {
+      color: var(--text-sub);
+    }
+
+    .allocation-error {
+      color: var(--red);
+    }
+
+    .allocation-ev-high {
+      color: var(--green);
+      background: var(--bg-soft-green);
+      box-shadow: 0 0 0 2px var(--green-mid);
+      border-radius: 5px;
+      padding: 2px 4px;
+      font-weight: 800;
+    }
+
+    .allocation-card .card-desc {
+      margin-bottom: 8px;
+    }
+
+    .reason-input {
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: #FFFFFF;
+      padding: 6px 8px;
+      font-size: 16px;
+      resize: vertical;
+    }
+
+    .reason-label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    .allocation-card [aria-invalid="true"], .horse-card [aria-invalid="true"] {
+      border-color: var(--red);
+      background: var(--bg-soft-red);
+    }
+
+    .allocation-totals-mobile {
+      display: none;
+    }
+
+    .rebound-badge {
+      display: inline-block;
+      margin: 4px 0;
+      padding: 2px 7px;
+      border: 1px solid #60A5FA;
+      border-radius: 6px;
+      background: #EFF6FF;
+      color: #1E40AF;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .rebound-fields {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin: 8px 0;
+    }
+
+    .rebound-fields summary {
+      cursor: pointer;
+      color: var(--navy);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .rebound-editor {
+      display: flex;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      margin: 8px 0 4px;
+    }
+
+    .rebound-editor label {
+      display: grid;
+      gap: 4px;
+      font-size: 13px;
+    }
+
+    .rebound-editor .reason-input {
+      max-width: 240px;
+    }
+
+    .allocation-feedback:empty {
+      display: none;
+    }
+
+    .allocation-feedback {
+      margin: 8px 0 0;
+      font-weight: 700;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .paste-format-select {
+      max-width: 100%;
+      min-height: 42px;
+      padding: 4px 8px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--bg-card);
+      font-size: 15px;
+    }
+
+    .paste-preview-list {
+      margin: 6px 0;
+      padding-left: 22px;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 799px) {
+      #allocationTableWrap {
+        display: none;
+      }
+
+      .allocation-totals-mobile {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 12px;
+        margin: 8px 0 0;
+        padding-top: 8px;
+        border-top: 1px solid var(--border);
+        font-size: 13px;
+      }
+
+      .allocation-totals-mobile dd {
+        margin: 0;
+        font-weight: 700;
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+
+      .horse-card .horse-guard-controls label {
+        min-height: 44px;
+      }
     }
 
     .tag-row {
@@ -794,6 +1028,143 @@
       justify-content: flex-end;
     }
 
+    .race-context {
+      border-left: 3px solid var(--navy);
+      background: var(--bg-soft-blue);
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+
+    .race-context dl {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      gap: 3px 12px;
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .race-context dt {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .race-context dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .race-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 178px), 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .race-form label, .risk-memo-label {
+      display: grid;
+      align-content: start;
+      gap: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    .race-form :is(input, select) {
+      min-width: 0;
+      width: 100%;
+      min-height: 44px;
+      padding: 6px 8px;
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      background: var(--bg-card);
+      font-size: 16px;
+    }
+
+    .race-picks {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+      gap: 10px;
+    }
+
+    .race-option {
+      cursor: pointer;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      padding: 11px;
+      min-width: 0;
+      font-size: 13px;
+    }
+
+    .race-option:has(input:checked) {
+      border-color: var(--green-mid);
+      box-shadow: inset 0 0 0 1px var(--green-mid);
+      background: var(--bg-soft-green);
+    }
+
+    .race-option-name {
+      color: var(--navy);
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+
+    .race-option input, .risk-option input {
+      flex: none;
+      accent-color: var(--green-mid);
+      width: 17px;
+      height: 17px;
+      margin: 3px 0 0;
+    }
+
+    .scenario-chart {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 7px;
+      background: var(--bg-soft-blue);
+    }
+
+    .scenario-caption {
+      color: var(--text-sub);
+      font-size: 11px;
+    }
+
+    .race-suggestions {
+      margin: 8px 0 12px;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg-page);
+      font-size: 14px;
+    }
+
+    .race-suggestions ul {
+      margin: 3px 0 0;
+      padding-left: 20px;
+    }
+
+    .risk-option {
+      cursor: pointer;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      min-height: 44px;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+
+    .risk-option strong {
+      display: block;
+      color: var(--navy);
+    }
+
     nav.bottom-nav {
       position: fixed;
       bottom: 0;
@@ -802,7 +1173,7 @@
       background: var(--bg-card);
       border-top: 2px solid var(--border);
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       z-index: 30;
     }
 
@@ -825,6 +1196,29 @@
       background: var(--bg-soft-blue);
       color: var(--navy);
       border-top: 3px solid var(--navy);
+    }
+
+    @media (max-width: 480px) {
+      .nav-btn {
+        min-height: 62px;
+        padding-inline: 2px;
+        font-size: 11px;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+      }
+
+      .race-nav-label {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .race-nav-label > span {
+        white-space: nowrap;
+      }
+
+      .race-nav-dot {
+        display: none;
+      }
     }
 
     .nav-icon {
@@ -974,9 +1368,9 @@
 <main class="main-container">
   <section class="summary-bar" aria-label="勝率合計サマリー">
     <div class="sum-main">
-      <span class="sum-label">独自勝率合計</span>
-      <span class="sum-value" id="totalWinDisplay">100.0%</span>
-      <span class="sum-badge badge-ok" id="totalStatusBadge">100%適正</span>
+      <span class="sum-label">勝率配分案合計</span>
+      <span class="sum-value" id="totalWinDisplay">—</span>
+      <span class="sum-badge" id="totalStatusBadge" role="status"></span>
     </div>
     <div class="sum-controls">
       <button type="button" class="btn-success" id="btnNormalize">100%に揃える</button>
@@ -987,6 +1381,59 @@
 
   <!-- タブ1：勝率・印 -->
   <section class="tab-panel active" id="panel-horses">
+    <section class="card allocation-card" aria-labelledby="allocationTitle">
+      <div class="card-title-row">
+        <h2 class="card-title" id="allocationTitle">勝率配分テーブル</h2>
+        <div class="allocation-controls">
+          <button type="button" class="btn-primary" id="btnOpenAiPaste">AIテーブル一括貼付</button>
+          <button type="button" class="btn-help" data-help="market" aria-label="市場基準勝率の説明">？</button>
+        </div>
+      </div>
+      <div class="race-context" id="allocationRaceContext" hidden>
+        <dl id="raceContextValues"></dl>
+        <button type="button" class="btn-secondary" id="btnCopyRaceContext">根拠メモ用に要約をコピー</button>
+      </div>
+      <p class="card-desc">市場基準勝率に増減調整（pp）を足して配分案を作ります。同オッズは馬番の小さい順です。</p>
+      <div class="allocation-controls">
+        <label><input type="checkbox" id="floorLockEnabled"> 10.00%下限ロック</label>
+      </div>
+      <p class="card-desc" id="floorGuardHint">4〜6番人気または実力裏付けありの馬が10%未満なら警告します。研究上の目安です。</p>
+      <div class="allocation-table-wrap" id="allocationTableWrap" tabindex="0" aria-label="勝率配分テーブル">
+        <table class="allocation-table">
+          <thead>
+            <tr>
+              <th scope="col">馬番</th>
+              <th scope="col">馬名</th>
+              <th scope="col">単勝オッズ</th>
+              <th scope="col" class="numeric">80÷オッズ</th>
+              <th scope="col" class="numeric">市場基準勝率</th>
+              <th scope="col">増減調整</th>
+              <th scope="col" class="numeric">勝率配分案</th>
+              <th scope="col" class="numeric">単勝EV</th>
+              <th scope="col">第1層根拠（削る・足す理由）</th>
+            </tr>
+          </thead>
+          <tbody id="allocationTableBody"></tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" colspan="3">合計</th>
+              <td class="numeric" data-total="raw"></td>
+              <td class="numeric" data-total="market"></td>
+              <td class="numeric" data-total="delta"></td>
+              <td class="numeric"><strong data-total="effective"></strong></td>
+              <td colspan="2"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <dl class="allocation-totals-mobile" aria-label="合計">
+        <dt>80÷オッズ合計</dt><dd data-total="raw"></dd>
+        <dt>市場基準勝率合計</dt><dd data-total="market"></dd>
+        <dt>増減調整合計</dt><dd data-total="delta"></dd>
+        <dt>勝率配分案合計</dt><dd data-total="effective"></dd>
+      </dl>
+      <p class="allocation-feedback allocation-error" id="allocationError" role="status"></p>
+    </section>
     <div id="horseList"></div>
   </section>
 
@@ -994,7 +1441,7 @@
   <section class="tab-panel" id="panel-radar">
     <div class="card">
       <div class="card-title-row">
-        <h2 class="card-title">歪みレーダー（独自勝率 × 単勝オッズ）</h2>
+        <h2 class="card-title">歪みレーダー（勝率配分案 × 単勝オッズ）</h2>
         <button type="button" class="btn-help" id="btnHelpRadar" aria-label="歪みレーダーの説明">？</button>
       </div>
       <p class="card-desc">点線の右上エリアは「市場の予想より自前勝率が高く、お得度（EV）が高いゾーン」や。馬番の丸をタップすると詳細が出るで。</p>
@@ -1012,6 +1459,7 @@
       <p class="card-desc" id="driftSubtitle">複数時点のオッズ変化（資金流入・直前反発）を追うダッシュボードや。時点別オッズがある馬は折れ線で推移を表示するで。</p>
 
       <div class="drift-summary-grid" id="driftSummaryCards"></div>
+      <div class="chart-detail-box" id="reboundDashboard"></div>
 
       <div class="chart-wrap" id="driftChartContainer"></div>
 
@@ -1069,6 +1517,7 @@
         <div class="card-desc" id="betSummaryLine" style="margin:0;">抽出買い目：0点 / 配分合計：0円</div>
         <button type="button" class="btn-secondary" id="btnCopyBets">📋 買い目をテキストコピー</button>
       </div>
+      <p class="card-desc" id="betModelNote"></p>
 
       <div id="betEmptyGuide" style="display:none;margin-bottom:12px;"></div>
 
@@ -1079,8 +1528,8 @@
               <th>順位</th>
               <th>買い目</th>
               <th>推定的中率</th>
-              <th>オッズ目安</th>
-              <th>期待値(EV)</th>
+              <th id="betOddsHeader">推定オッズ</th>
+              <th id="betEvHeader">概算EV</th>
               <th>推奨投資額</th>
               <th>的中時払戻</th>
             </tr>
@@ -1093,7 +1542,93 @@
     </div>
   </section>
 
-  <!-- タブ4：性格・条件 -->
+  <section class="tab-panel" id="panel-race">
+    <section class="card" aria-labelledby="raceCharacterTitle">
+      <div class="card-title-row">
+        <h2 class="card-title" id="raceCharacterTitle">レースの性格</h2>
+        <button type="button" class="btn-secondary" data-clear-race="raceCharacter">選択を解除</button>
+      </div>
+      <p class="card-desc">入力した条件から候補を表示します。確認したいタイプを選んでください。各タイプは研究上の仮説です。</p>
+      <div class="race-form">
+        <label>レース名 <input type="text" id="editRaceTitle" placeholder="例  ジャパンカップ"></label>
+        <label>開催日 <input type="date" data-race-key="date"></label>
+        <label>競馬場 <input type="text" data-race-key="venue" placeholder="例  東京"></label>
+        <label>コース
+          <select data-race-key="surface">
+            <option value="">未入力</option><option value="turf">芝</option><option value="dirt">ダート</option><option value="jump">障害</option>
+          </select>
+        </label>
+        <label>距離（m） <input type="number" data-race-key="distance" min="1" max="10000" step="1" inputmode="numeric"></label>
+        <label>馬場状態
+          <select data-race-key="going">
+            <option value="">未入力</option><option value="good">良</option><option value="soft">稍重</option>
+            <option value="heavy">重</option><option value="sloppy">不良</option>
+          </select>
+        </label>
+        <label>年齢条件
+          <select data-race-key="age">
+            <option value="">未入力</option><option value="two">2歳</option><option value="threeSpring">3歳春</option>
+            <option value="threeAutumn">3歳秋以降</option><option value="older">古馬・3歳以上</option>
+          </select>
+        </label>
+        <label>クラス
+          <select data-race-key="raceClass">
+            <option value="">未入力</option><option value="new">新馬</option><option value="maiden">未勝利</option>
+            <option value="oneWin">1勝クラス</option><option value="twoWin">2勝クラス</option><option value="threeWin">3勝クラス</option>
+            <option value="open">オープン・リステッド</option><option value="g1">GⅠ</option><option value="g2">GⅡ</option><option value="g3">GⅢ</option>
+          </select>
+        </label>
+        <label>斤量条件
+          <select data-race-key="weight">
+            <option value="">未入力</option><option value="fixed">定量</option><option value="separate">別定</option><option value="handicap">ハンデ</option>
+          </select>
+        </label>
+        <label>出走頭数 <input type="number" data-race-key="fieldSize" min="1" max="28" step="1" inputmode="numeric"></label>
+        <label>キャリア情報
+          <select data-race-key="career">
+            <option value="">未入力</option><option value="shallow">キャリアの浅い馬が多い</option><option value="other">それ以外</option>
+          </select>
+        </label>
+        <label>タフなコース条件
+          <select data-race-key="toughCourse">
+            <option value="">未確認</option><option value="confirmed">洋芝・急坂などを確認</option><option value="no">該当条件なし</option>
+          </select>
+        </label>
+      </div>
+      <div class="race-suggestions" id="raceCharacterSuggestions" aria-live="polite"></div>
+      <div class="race-picks" id="raceCharacterPicks" role="radiogroup" aria-label="レース性格3タイプ"></div>
+    </section>
+    <section class="card" aria-labelledby="paceScenarioTitle">
+      <div class="card-title-row">
+        <h2 class="card-title" id="paceScenarioTitle">展開・能力発揮条件</h2>
+        <button type="button" class="btn-secondary" data-clear-race="paceScenario">選択を解除</button>
+      </div>
+      <div class="race-form">
+        <label>逃げ・先行を想定する馬の頭数
+          <input type="number" data-race-key="frontRunners" min="0" max="28" step="1" inputmode="numeric">
+        </label>
+        <label>隊列・過去ラップから確認した材料
+          <select data-race-key="paceEvidence">
+            <option value="">未入力</option><option value="late">前半を抑えられる材料</option>
+            <option value="steady">高い巡航水準が続く材料</option><option value="early">前半から競り合う材料</option>
+          </select>
+        </label>
+        <label>根拠の補足 <input type="text" data-race-key="paceEvidenceNote" placeholder="例  ハナを主張する馬が複数"></label>
+      </div>
+      <div class="race-suggestions" id="paceSuggestions" aria-live="polite"></div>
+      <div class="race-picks" id="paceScenarioPicks" role="radiogroup" aria-label="展開3シナリオ"></div>
+    </section>
+    <section class="card" aria-labelledby="riskTitle">
+      <div class="card-title-row"><h2 class="card-title" id="riskTitle">波乱・上位総崩れリスク</h2></div>
+      <div id="riskTriggers"></div>
+      <label class="risk-memo-label">なぜ人気馬がまとめて崩れる可能性があるか
+        <textarea class="reason-input" id="riskMemo" rows="3" placeholder="根拠や反証をメモ"></textarea>
+      </label>
+      <div class="race-suggestions" id="riskReview"></div>
+    </section>
+  </section>
+
+  <!-- タブ5：印配分とバイアス -->
   <section class="tab-panel" id="panel-settings">
     <div class="card">
       <div class="card-title-row">
@@ -1105,10 +1640,10 @@
 
     <div class="card">
       <div class="card-title-row">
-        <h2 class="card-title">レースの性格3分類（標準プリセット）</h2>
+        <h2 class="card-title">戦術・印配分の標準プリセット</h2>
         <button type="button" class="btn-help" id="btnHelpPreset" aria-label="性格プリセットの説明">？</button>
       </div>
-      <p class="card-desc">レースの性格を選ぶと、印に応じた勝率配分テンプレートと立ち回り規律が切り替わるで。「詳細を見る」で配分比率や鉄則を開けるよ。</p>
+      <p class="card-desc">印による勝率配分を反映する前に、各馬の変更値を確認できます。「詳細を見る」で配分比率と方針を開けます。</p>
       <div id="presetList"></div>
     </div>
 
@@ -1135,9 +1670,13 @@
     <span class="nav-icon">🎫</span>
     <span>買い目配分</span>
   </button>
+  <button type="button" class="nav-btn" data-tab="race" aria-label="レース性格・展開">
+    <span class="nav-icon">📈</span>
+    <span class="race-nav-label"><span>レース性格</span><span><span class="race-nav-dot">・</span>展開</span></span>
+  </button>
   <button type="button" class="nav-btn" data-tab="settings">
     <span class="nav-icon">⚙️</span>
-    <span>性格・条件</span>
+    <span>配分・設定</span>
   </button>
 </nav>
 
@@ -1150,23 +1689,32 @@
     </div>
 
     <div class="subtab-bar">
-      <button type="button" class="subtab-btn active" data-subtab="paste">📋 オッズ表コピペ</button>
+      <button type="button" class="subtab-btn active" data-subtab="paste">📋 表を貼り付け</button>
       <button type="button" class="subtab-btn" data-subtab="code">📩 共有コード</button>
       <button type="button" class="subtab-btn" data-subtab="manual">✏️ カンタン手入力</button>
     </div>
 
     <div id="subtab-paste">
-      <p class="card-desc">
-        <strong>1.</strong> 出馬表やオッズ表をコピーして貼り付けてな。<br>
-        <strong>2.</strong> 1行に「馬番 馬名 オッズ」か、複数時点オッズ（例：`12 オンユアマークス 12.5 13.2 14.8`）を入れると推移グラフも自動で動くで。<br>
-        <strong>3.</strong> 下の緑ボタンで今の画面に反映されるよ。
-      </p>
+      <p class="card-desc">オッズ表は「馬番 馬名 オッズ」の順で貼り付けてください。複数時点のオッズにも対応します。AIテーブルは勝率配分テーブルの列順で9列のTSVかMarkdownを貼り付けます。</p>
+      <div class="allocation-controls" style="margin-bottom:8px;">
+        <label for="pasteFormat">形式</label>
+        <select class="paste-format-select" id="pasteFormat">
+          <option value="auto">自動判定</option>
+          <option value="odds">従来のオッズ表</option>
+          <option value="allocation">9列の勝率配分表</option>
+        </select>
+        <label for="pasteMode" id="pasteModeLabel" hidden>反映方法</label>
+        <select class="paste-format-select" id="pasteMode" hidden>
+          <option value="update">馬番・馬名が一致する行を更新</option>
+          <option value="replace">全頭を置き換えて読み込む</option>
+        </select>
+      </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-        <button type="button" class="btn-secondary" id="btnInsertSamplePaste">サンプル表を入れる</button>
+        <button type="button" class="btn-secondary" id="btnInsertSamplePaste">オッズ表の例を入れる</button>
         <button type="button" class="btn-secondary" id="btnClearPaste">クリア</button>
       </div>
       <textarea class="paste-area" id="pasteInput" placeholder="例：&#10;1 クロワデュノール 2.8 2.8 2.8&#10;2 オンブズマン 4.5 4.3 4.2&#10;12 オンユアマークス 12.2 13.0 14.8"></textarea>
-      <div class="preview-box" id="pastePreview">貼り付け内容を解析中...</div>
+      <div class="preview-box" id="pastePreview" aria-live="polite">貼り付けると反映内容を確認できます。</div>
       <div style="margin-top:12px;text-align:right;">
         <button type="button" class="btn-success" id="btnApplyPaste" disabled>この内容で反映する</button>
       </div>
@@ -1182,8 +1730,9 @@
     </div>
 
     <div id="subtab-manual" style="display:none;">
-      <p class="card-desc">馬番・馬名・単勝オッズをその場で直感的に編集できるで。</p>
+      <p class="card-desc">馬番・馬名・単勝オッズを編集し、反映する出走馬を確認してください。</p>
       <div id="manualRows"></div>
+      <p class="allocation-error" id="manualErrors" role="status"></p>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
         <button type="button" class="btn-secondary" id="btnAddManualRow">＋ 1頭追加</button>
         <button type="button" class="btn-secondary" id="btnClearManualRows">🗑️ リストを空にする</button>
@@ -1200,7 +1749,7 @@
       <h2 class="modal-title" id="shareModalTitle">🔗 予想・設定をシェア</h2>
       <button type="button" class="btn-secondary" id="btnCloseShare">閉じる</button>
     </div>
-    <p class="card-desc">今の勝率・オッズ推移・予算・レース性格をURLやコードにまとめて渡せるで。相手の画面が勝手に変わることはないから安心や。</p>
+    <p class="card-desc">勝率・オッズ推移・基準オッズ・レースの条件や観測メモをまとめます。別端末でローカル版を使う場合は、共有コードを貼り付けて読み込んでください。</p>
 
     <div class="filter-box" style="margin-bottom:12px;">
       <div class="metric-label"><span>共有URL（そのままLINE等で送れるリンク）</span></div>
@@ -1232,6 +1781,19 @@
   </div>
 </div>
 
+<div class="modal-backdrop" id="presetPreviewModal" role="dialog" aria-modal="true" aria-labelledby="presetPreviewTitle">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2 class="modal-title" id="presetPreviewTitle">印配分の反映内容</h2>
+      <button type="button" class="btn-secondary" id="btnCancelPreset">閉じる</button>
+    </div>
+    <div class="preview-box" id="presetPreview"></div>
+    <div style="margin-top:12px;text-align:right;">
+      <button type="button" class="btn-success" id="btnConfirmPreset">この印配分を適用する</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -1239,6 +1801,13 @@
   "use strict";
 
   const NERAI_EV_MIN = 1.05; // 適正ゾーン内の「狙い目」ライン
+  const MIN_ODDS = 1;
+  const MAX_ODDS = 999.9;
+  const MAX_HORSES = 28;
+  const WIN_FLOOR = 10;
+  const WIN_EV_HIGHLIGHT = 1.20;
+  const SUM_WARNING = 0.05;
+  const EPS = 1e-9;
   const CUSTOM_STORAGE_KEY = "trick_logic_custom_presets_v1";
   const MARKS = ["◎", "○", "▲", "△", "☆", "✓", "消"];
   const BET_TYPE_LABELS = {
@@ -1372,7 +1941,7 @@
       title: "使い方（3ステップでOK）",
       html: `
         <p><strong>① 「🐎 勝率・印」で自分の勝率をつくる</strong><br>
-        各馬の「＋」「－」や印を押して、自分なりの勝率配分を作るで。最後に上の緑ボタン<strong>「100%に揃える」</strong>を押すと合計がぴったり100.0%になるよ。</p>
+        市場基準勝率からの増減を入力し、必要に応じて<strong>「100%に揃える」</strong>で配分案の合計を調整します。印を使う配分は反映前に確認できます。</p>
         <p><strong>② 「📊 歪み図」でお得度とオッズ推移を見る</strong><br>
         「歪みレーダー」で市場より割安な馬を、「時系列オッズ推移」で直前反発（揺り戻し）をチェックできるで。</p>
         <p><strong>③ 「🎫 買い目配分」で100円単位の資金配分を出す</strong><br>
@@ -1380,10 +1949,10 @@
       `
     },
     total: {
-      title: "独自勝率合計（100.0%）とは？",
+      title: "勝率配分案の合計",
       html: `
-        <p>出走馬全員が勝つ確率の合計は、理屈上<strong>100.0%</strong>になる必要があるで。</p>
-        <p>「＋」「－」で動かしたあと<strong>「100%に揃える」</strong>を押すと、今の比率を保ったまま合計を100.0%に自動で調整するよ。</p>
+        <p>出走馬全員が勝つ確率の合計を<strong>100.00%</strong>に揃えると、買い目配分を計算できます。</p>
+        <p>「100%に揃える」を押すと、ロック対象の10.00%を確保したうえで、残りを0.01ポイント単位で再配分します。</p>
       `
     },
     ev: {
@@ -1395,10 +1964,10 @@
       `
     },
     market: {
-      title: "市場基準勝率（80 ÷ オッズ）とは？",
+      title: "市場基準勝率と増減調整",
       html: `
-        <p>JRAの単勝は控除率（取り分）が約20%あるため、残りの<strong>80%</strong>を単勝オッズで割ると「世間（大衆）がその馬に付けている勝率の目安」が出るで。</p>
-        <p>例：単勝4.0倍なら <code>80 ÷ 4.0 ＝ 20.0%</code>。この数字よりウチの独自勝率が高ければ「市場が見落としているかも」と疑う材料になるよ。</p>
+        <p>このアプリでは各馬の <code>80 ÷ 単勝オッズ</code> を合計し、その中で占める割合を市場基準勝率とします。市場基準勝率の合計は100.00%です。</p>
+        <p>市場基準勝率に増減調整（パーセントポイント）を足し、マイナスになった場合は0%にします。下限ロックを適用した分は別に表示します。</p>
       `
     },
     radar: {
@@ -1423,22 +1992,81 @@
       `
     },
     preset: {
-      title: "レースの性格プリセットとは？",
+      title: "戦術・印配分プリセット",
       html: `
-        <p>2歳戦やハンデ戦のように荒れやすいレースと、古馬重賞のように実力通りになりやすいレースでは、勝率の置き方を変える必要があるで。</p>
-        <p>性格を選ぶと、印（◎〜✓）ごとの基準勝率が自動で切り替わるよ。</p>
+        <p>印（◎〜消）の重みを配分案に適用できます。プレビューで各馬の反映前後を確認してください。</p>
+        <p>「レース性格・展開」の選択は、配分の根拠を整理するために使えます。</p>
       `
     },
     harville: {
       title: "ハービル法 ＆ バイアス補正とは？",
       html: `
         <p>単勝の勝率から、2着・3着に入る確率を順番に掛け合わせて連系（ワイド・馬連・3連複・3連単）の確率を概算するのが<strong>ハービル法</strong>や。</p>
-        <p>さらに「外差し」「内前残り」などの馬場バイアス補正を乗せて、実際のオッズと比べているで。</p>
+        <p>「外差し」「内前残り」の設定ではタグに応じて概算確率を補正します。連系EVは、単勝市場基準にもとづく推定オッズから算出します。</p>
       `
     }
   };
 
-  const DEFAULT_TIMESTAMPS = ["13:25", "14:31", "15:18"];
+  const RACE_CHARACTERS = {
+    highVariance: {
+      name: "高分散・事故多発型",
+      conditions: "2歳戦、キャリアの浅い3歳春の条件戦、16頭以上のハンデ戦",
+      features: "出遅れや暴走、進路詰まりが能力順の決着を崩す可能性があります。",
+      policy: "観測・見送りを基本に、評価する場合はワイド・3連複を中心に検討。",
+      focus: ["スタート", "折り合い", "進路"]
+    },
+    ability: {
+      name: "能力・時計収束型",
+      conditions: "3歳秋〜古馬の定量・別定のGⅠ〜GⅢ、2勝〜3勝クラス",
+      features: "持ち時計・脚質・コース適性を比較しやすい条件です。",
+      policy: "独自勝率とEVを重点検証し、EV 1.20以上を確認候補として扱う。",
+      focus: ["持ち時計", "脚質", "コース適性"]
+    },
+    endurance: {
+      name: "消耗・サバイバル型",
+      conditions: "芝2400m以上、重〜不良馬場、確認済みの洋芝・急坂など",
+      features: "スタミナと持続力、厳しい馬場への対応力が重要になる可能性があります。",
+      policy: "距離適性、持続力、血統、厳しい条件での実績を重点評価。",
+      focus: ["スタミナ", "持続力", "重馬場実績"]
+    }
+  };
+
+  const PACE_SCENARIOS = {
+    late: {
+      name: "前半抑制・後半加速型",
+      path: "M28 72 C76 72 111 72 147 68 S229 57 298 25",
+      focus: ["折り合い", "加速力", "上がり3F", "直線進入時の位置取り"]
+    },
+    steady: {
+      name: "持続力勝負",
+      path: "M28 35 C74 31 105 37 148 35 S229 31 298 34",
+      focus: ["同距離実績", "高い巡航能力", "ロングスパート適性", "早めに動く展開への対応"]
+    },
+    early: {
+      name: "前半負荷・消耗型",
+      path: "M28 27 C79 28 116 43 152 52 S232 69 298 74",
+      focus: ["先行負荷耐性", "スタミナ", "余力", "タフな馬場への適性"]
+    }
+  };
+
+  const RISK_TRIGGERS = {
+    frontPressure: {
+      name: "先行過密・ハイペース消耗リスク", short: "先行過密",
+      review: "同型先行馬の主張と、前崩れで差し・追込が届く条件を確認。"
+    },
+    slowTraffic: {
+      name: "超スロー・位置取り＆進路詰まりリスク", short: "超スロー・進路詰まり",
+      review: "馬群が密集した場合の後方勢の届き方と、進路確保を確認。"
+    },
+    biasShift: {
+      name: "コース替わり・トラックバイアス急変リスク", short: "馬場バイアス急変",
+      review: "仮柵移動・馬場悪化の有無と、当日の内外・脚質傾向を確認。"
+    },
+    conditionChange: {
+      name: "条件替わり・ラベル誤認集中リスク", short: "条件替わり・ラベル誤認",
+      review: "初距離、海外帰り、別条件での実績が上位人気馬に偏っているかを確認。"
+    }
+  };
 
   const INITIAL_STATE = {
     raceTitle: "ジャパンカップ（東京芝2400m・サンプル）",
@@ -1449,6 +2077,12 @@
     minHit: 0.8,
     budget: 2000,
     betType: "wide",
+    floorLockEnabled: false,
+    raceCharacter: null,
+    paceScenario: null,
+    raceConditions: {},
+    riskTriggers: [],
+    riskMemo: "",
     selectedRadarNum: 3,
     selectedDriftNum: 5,
     horses: [
@@ -1470,6 +2104,7 @@
   }
 
   let state = cloneState(INITIAL_STATE);
+  migrateLegacyWinPct(state.horses);
   let customSlots = loadCustomSlots();
   let lastAllocatedBets = [];
 
@@ -1499,41 +2134,138 @@
     return `<span class="ev-pill ${m.cls}"><span>${m.icon}</span><span>EV</span><strong>${evVal.toFixed(2)}</strong><span>${m.label}</span></span>`;
   }
 
-  function getActivePresetWeights() {
-    const custom = customSlots.find(s => s.id === state.preset);
-    if (custom) return custom.weights;
-    return (PRESETS[state.preset] || PRESETS.convergence).weights;
+  function readDecimal(value, suffix = "") {
+    if (typeof value === "number") return Number.isFinite(value) ? value : null;
+    if (typeof value !== "string") return null;
+    let text = value.normalize("NFKC").trim().replace(/\u2212/g, "-");
+    if (suffix && text.endsWith(suffix)) text = text.slice(0, -suffix.length).trim();
+    if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(text)) return null;
+    const number = Number(text);
+    return Number.isFinite(number) ? number : null;
+  }
+
+  function readOdds(value) {
+    const odds = readDecimal(value, "倍");
+    return odds !== null && odds >= MIN_ODDS && odds <= MAX_ODDS ? odds : null;
+  }
+
+  function readDelta(value) {
+    const delta = readDecimal(value, "%");
+    return delta !== null && Math.abs(delta * 100) <= Number.MAX_SAFE_INTEGER ? delta : null;
+  }
+
+  function sumValues(values) {
+    return values.reduce((sum, value) => sum + value, 0);
+  }
+
+  // 配分と表示に使う整数の最大剰余方式。同じ余りは馬番の小さい順。
+  function distributeUnits(weights, units, horses) {
+    const total = sumValues(weights);
+    if (total <= 0 || units <= 0) return weights.map(() => 0);
+    const exacts = weights.map(w => (w / total) * units);
+    const shares = exacts.map(Math.floor);
+    const order = exacts
+      .map((exact, i) => ({ i, remainder: exact - shares[i] }))
+      .sort((a, b) => b.remainder - a.remainder || horses[a.i].num - horses[b.i].num);
+    const extra = units - sumValues(shares);
+    for (let i = 0; i < extra; i++) shares[order[i].i]++;
+    return shares;
   }
 
   function computeMarketProbs(horses) {
-    if (!horses.length) return [];
     const raws = horses.map(h => {
-      const o = Number(h.odds);
-      return o > 1.0 ? 80 / o : 0;
+      const odds = readOdds(h.odds);
+      return odds === null ? 0 : 80 / odds;
     });
-    const sum = raws.reduce((a, b) => a + b, 0);
-    if (sum <= 0) return horses.map(() => 0);
-    return raws.map(r => (r / sum) * 100);
+    const rawTotal = sumValues(raws);
+    const bases = raws.map(raw => rawTotal > 0 ? (raw / rawTotal) * 100 : 0);
+    const displayUnits = distributeUnits(raws, 10000, horses);
+    return { raws, rawTotal, bases, displayUnits };
   }
 
   function computePopularityRanks(horses) {
-    const indexed = horses.map((h, i) => ({ i, odds: Number(h.odds) || 9999 }));
-    indexed.sort((a, b) => a.odds - b.odds);
-    const ranks = new Array(horses.length).fill(0);
-    indexed.forEach((item, pos) => {
-      ranks[item.i] = pos + 1;
-    });
+    const indexed = horses.map((h, i) => ({ i, num: h.num, odds: readOdds(h.odds) }))
+      .filter(h => h.odds !== null)
+      .sort((a, b) => a.odds - b.odds || a.num - b.num);
+    const ranks = horses.map(() => 0);
+    indexed.forEach(({ i }, pos) => { ranks[i] = pos + 1; });
     return ranks;
   }
 
-  function getTotalWinPct() {
-    return state.horses.reduce((sum, h) => sum + (Number(h.winPct) || 0), 0);
+  function migrateLegacyWinPct(horses) {
+    const { bases } = computeMarketProbs(horses);
+    horses.forEach((horse, i) => {
+      if (!Object.hasOwn(horse, "adjustDelta")) {
+        const oldWin = readDecimal(horse.winPct, "%");
+        horse.adjustDelta = oldWin === null ? 0 : Math.max(0, oldWin) - bases[i];
+      }
+      delete horse.winPct;
+    });
+  }
+
+  function computeRebound(horse, odds, rank) {
+    const initialOdds = readOdds(horse.initialOdds);
+    const reboundPct = initialOdds === null || odds === null ? null : (odds - initialOdds) / initialOdds * 100;
+    const reboundOk = reboundPct !== null && reboundPct >= 15 - EPS && rank >= 4 && rank <= 7;
+    return { initialOdds, reboundPct, reboundOk };
+  }
+
+  function computeWinAllocation(horses, floorEnabled) {
+    const market = computeMarketProbs(horses);
+    const ranks = computePopularityRanks(horses);
+    const rows = horses.map((horse, i) => {
+      const odds = readOdds(horse.odds);
+      const validDelta = Number.isFinite(horse.adjustDelta);
+      const popular = ranks[i] >= 4 && ranks[i] <= 6;
+      const eligible = popular || horse.strengthFlag === true;
+      const floor = floorEnabled && eligible && horse.floorLock !== false ? WIN_FLOOR : 0;
+      const requested = odds === null || !validDelta
+        ? null : Math.max(0, market.bases[i] + horse.adjustDelta);
+      const effective = requested === null ? null : Math.max(floor, requested);
+      return {
+        odds, validDelta, popular, eligible, floor, requested, effective,
+        ...computeRebound(horse, odds, ranks[i]),
+        raw: market.raws[i],
+        base: market.bases[i],
+        displayMarket: market.displayUnits[i] / 100,
+        rank: ranks[i],
+        correction: requested === null ? 0 : effective - requested,
+        ev: effective === null ? null : (effective / 100) * odds
+      };
+    });
+    const total = sumValues(rows.map(row => row.effective ?? 0));
+    const floorTotal = sumValues(rows.map(row => row.floor));
+    const deltaTotal = rows.every(row => row.validDelta)
+      ? sumValues(horses.map(h => h.adjustDelta)) : null;
+    let problem = "";
+    if (!rows.length) problem = "出走馬を読み込んでください。";
+    else if (rows.some(row => row.odds === null)) problem = "単勝オッズを1.0〜999.9倍の範囲で入力してください。";
+    else if (deltaTotal === null) problem = "増減調整を数値で入力してください。";
+    else if (floorTotal > 100) problem = "再配分できません。下限ロックの合計が100.00%を超えています。一部のロックを解除してください。";
+    const balanced = !problem && Math.abs(total - 100) <= EPS;
+    const displayEffective = balanced
+      ? distributeUnits(rows.map(row => row.effective), 10000, horses)
+      : null;
+    return { rows, market, total, floorTotal, deltaTotal, balanced, displayEffective, problem };
+  }
+
+  function signedDecimal(value) {
+    const fixed = value.toFixed(2);
+    return fixed === "-0.00" ? "0.00" : value > 0 && fixed !== "0.00" ? "+" + fixed : fixed;
+  }
+
+  function percent(value) {
+    return value === null ? "—" : value.toFixed(2) + "%";
+  }
+
+  function shownEffective(allocation, i) {
+    return allocation.displayEffective ? allocation.displayEffective[i] / 100 : allocation.rows[i].effective;
   }
 
   function getDriftStats(horse) {
-    const hist = Array.isArray(horse.oddsHistory) && horse.oddsHistory.length >= 2
-      ? horse.oddsHistory.map(Number).filter(n => n > 1)
-      : [Number(horse.odds) || 1];
+    const values = Array.isArray(horse.oddsHistory) && horse.oddsHistory.length
+      ? horse.oddsHistory : [horse.odds];
+    const hist = values.map(readOdds).filter(odds => odds !== null);
     const first = hist[0];
     const last = hist[hist.length - 1];
     const prev = hist.length >= 2 ? hist[hist.length - 2] : first;
@@ -1544,129 +2276,254 @@
   }
 
   function renderAll() {
-    document.getElementById("raceMetaLabel").textContent = state.raceTitle || "レース観測データ";
-    renderTotalBar();
+    renderRaceWorkspace();
     renderHorses();
-    renderRadar();
+    refreshWinAllocation();
     renderDriftDashboard();
-    renderBets();
     renderSettings();
   }
 
-  function renderTotalBar() {
-    const total = getTotalWinPct();
-    const disp = document.getElementById("totalWinDisplay");
+  function refreshWinAllocation() {
+    const allocation = computeWinAllocation(state.horses, state.floorLockEnabled);
+    renderTotalBar(allocation);
+    updateHorseControls(allocation);
+    renderReboundDashboard(allocation);
+    renderRadar(allocation);
+    renderBets(allocation);
+  }
+
+  function renderTotalBar(allocation) {
+    const { rows, market, total, deltaTotal, balanced, problem } = allocation;
+    const hasCompleteRows = rows.length > 0 && rows.every(row => row.effective !== null);
+    const displayedTotal = hasCompleteRows ? percent(total) : "—";
+    const diff = 100 - total;
+    const display = document.getElementById("totalWinDisplay");
     const badge = document.getElementById("totalStatusBadge");
-    disp.textContent = total.toFixed(1) + "%";
-    const diff = Math.abs(total - 100);
-    if (diff < 0.15) {
-      disp.style.color = "var(--green)";
-      badge.textContent = "100%適正";
-      badge.className = "sum-badge badge-ok";
-    } else {
-      disp.style.color = "var(--amber)";
-      badge.textContent = "差 " + (total - 100 > 0 ? "+" : "") + (total - 100).toFixed(1) + "%";
-      badge.className = "sum-badge badge-warn";
-    }
+    display.textContent = displayedTotal;
+    display.style.color = balanced ? "var(--green)" : "var(--amber)";
+    badge.className = "sum-badge " + (balanced ? "badge-ok" : "badge-warn");
+    if (problem) badge.textContent = !rows.length ? "出走馬なし" : allocation.floorTotal > 100 ? "再配分不可" : "入力を確認";
+    else if (balanced) badge.textContent = "100.00% 適正";
+    else if (diff > SUM_WARNING + EPS) badge.textContent = `残り ${signedDecimal(diff)}% 配分可能`;
+    else if (diff < -SUM_WARNING - EPS) badge.textContent = `${signedDecimal(diff)}% 超過`;
+    else badge.textContent = "100%に揃えると連系計算を再開";
+    document.getElementById("allocationError").textContent = problem;
+    document.getElementById("floorLockEnabled").checked = state.floorLockEnabled;
+    const totals = {
+      raw: market.rawTotal > 0 ? percent(market.rawTotal) : "—",
+      market: market.rawTotal > 0 ? "100.00%" : "—",
+      delta: rows.length && deltaTotal !== null ? signedDecimal(deltaTotal) + " pp" : "—",
+      effective: displayedTotal
+    };
+    document.querySelectorAll("[data-total]").forEach(el => {
+      el.textContent = totals[el.dataset.total];
+    });
+  }
+
+  function oddsEditor(horse, key) {
+    return `<input type="number" class="odds-input" step="any" min="${MIN_ODDS}" max="${MAX_ODDS}"
+      inputmode="decimal" data-field="odds" aria-label="${escapeHtml(horse.name)}の単勝オッズ" aria-describedby="${key}-odds-error">
+      <span class="allocation-error" data-value="oddsError" id="${key}-odds-error" hidden>1.0〜999.9倍を入力</span>`;
+  }
+
+  function deltaEditor(horse, key) {
+    return `<div class="win-adjust">
+      <button type="button" class="step-btn" data-step="-0.01" aria-label="${escapeHtml(horse.name)}の増減調整を0.01ポイント下げる">−</button>
+      <input type="text" class="delta-input" data-field="adjustDelta"
+        aria-label="${escapeHtml(horse.name)}の増減調整（パーセントポイント）" aria-describedby="${key}-delta-error">
+      <button type="button" class="step-btn" data-step="0.01" aria-label="${escapeHtml(horse.name)}の増減調整を0.01ポイント上げる">＋</button>
+    </div>
+    <span class="allocation-error" data-value="deltaError" id="${key}-delta-error" hidden>増減調整の数値を入力</span>`;
+  }
+
+  function guardControls(horse) {
+    const name = escapeHtml(horse.name);
+    return `<div class="horse-guard-controls">
+      <label><input type="checkbox" data-field="strengthFlag" aria-label="${name}の実力裏付けあり"> 実力裏付けあり</label>
+      <label><input type="checkbox" data-field="floorLock" aria-label="${name}の下限ロック"> ロック</label>
+    </div>`;
+  }
+
+  function reasonEditor(horse, rows) {
+    return `<textarea class="reason-input" rows="${rows}" data-field="reason"
+      aria-label="${escapeHtml(horse.name)}の第1層根拠" placeholder="削る・足す理由"></textarea>`;
   }
 
   function renderHorses() {
     const container = document.getElementById("horseList");
-    const mktProbs = computeMarketProbs(state.horses);
-    const popRanks = computePopularityRanks(state.horses);
+    document.getElementById("allocationTableBody").innerHTML = state.horses.map((h, i) => `
+      <tr data-horse-row="${i}">
+        <th scope="row">${h.num}</th>
+        <td><strong>${escapeHtml(h.name)}</strong> <span class="pop-chip" data-value="rank"></span>
+          <span class="rebound-badge" data-value="reboundBadge" tabindex="0" hidden>REBOUND_OK</span>
+          ${guardControls(h)}
+        </td>
+        <td>${oddsEditor(h, "table-" + i)}</td>
+        <td class="numeric" data-value="raw"></td>
+        <td class="numeric" data-value="market"></td>
+        <td>${deltaEditor(h, "table-" + i)}</td>
+        <td class="numeric">
+          <strong data-value="effective"></strong>
+          <span class="allocation-detail" data-value="correction" hidden></span>
+          <span class="allocation-error allocation-warning" data-value="warning" tabindex="0" hidden></span>
+        </td>
+        <td class="numeric"><span data-value="ev"></span></td>
+        <td>${reasonEditor(h, 2)}</td>
+      </tr>
+    `).join("");
 
     if (!state.horses.length) {
-      container.innerHTML = `<div class="card"><p class="card-desc">出走馬がありません。上の「📥 レース読込」からオッズ表を貼り付けるか、手入力で追加してください。</p></div>`;
+      container.innerHTML = `<div class="card"><p class="card-desc">出走馬がありません。「レース読込」から追加してください。</p></div>`;
       return;
     }
 
-    container.innerHTML = state.horses.map((h, idx) => {
-      const mkt = mktProbs[idx] || 0;
-      const popRank = popRanks[idx] || 0;
-      const win = Number(h.winPct) || 0;
-      const odds = Number(h.odds) || 1;
-      const ev = (win / 100) * odds;
-      const diff = win - mkt;
-
-      const diffStr = (diff >= 0 ? "+" : "") + diff.toFixed(1) + "%";
-      const diffColor = diff >= 1.5 ? "var(--green)" : (diff <= -1.5 ? "var(--red)" : "var(--text-sub)");
-
-      const showHimoWarn = popRank >= 4 && popRank <= 6 && win < 10.0;
-      const himoWarnHtml = showHimoWarn
-        ? `<div class="himo-warn-pill">⚠️ 連系ヒモ抜け注意（${popRank}番人気・10%未満）</div>`
-        : "";
-
-      const markButtons = MARKS.map(m => {
-        const active = h.mark === m ? "active" : "";
-        return `<button type="button" class="mark-btn ${active}" data-idx="${idx}" data-mark="${m}">${m}</button>`;
+    container.innerHTML = state.horses.map((h, i) => {
+      const markButtons = MARKS.map(mark => {
+        const active = h.mark === mark;
+        return `<button type="button" class="mark-btn ${active ? "active" : ""}"
+          data-mark="${mark}" aria-pressed="${active}">${mark}</button>`;
       }).join("");
-
-      const tagButtons = TAGS.map(t => {
-        const isOn = Array.isArray(h.tags) && h.tags.includes(t.key);
-        const cls = isOn ? (t.warn ? "active warn-tag" : "active") : "";
-        return `<button type="button" class="tag-btn ${cls}" data-idx="${idx}" data-tag="${t.key}">${t.label}</button>`;
+      const tagButtons = TAGS.map(tag => {
+        const active = h.tags.includes(tag.key);
+        const cls = active ? (tag.warn ? "active warn-tag" : "active") : "";
+        return `<button type="button" class="tag-btn ${cls}" data-tag="${tag.key}"
+          aria-pressed="${active}">${tag.label}</button>`;
       }).join("");
 
       return `
-        <article class="horse-card">
+        <article class="horse-card" data-horse-row="${i}">
           <div class="horse-top">
             <div class="horse-name-wrap">
               <span class="horse-num">${h.num}</span>
               <h3 class="horse-name">${escapeHtml(h.name)}</h3>
-              <span class="pop-chip">${popRank}人気</span>
+              <span class="pop-chip" data-value="rank"></span>
             </div>
             <div style="display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;">
-              ${formatEvDisplay(ev)}
+              <span data-value="ev" data-format="pill"></span>
               <button type="button" class="btn-help" data-help="ev" aria-label="期待値EVの説明">？</button>
             </div>
           </div>
-
-          ${himoWarnHtml}
-
+          <div class="himo-warn-pill" data-value="warning" tabindex="0" hidden></div>
           <div class="mark-row" role="group" aria-label="${escapeHtml(h.name)}の印">${markButtons}</div>
-
           <div class="horse-grid">
             <div class="metric-box">
-              <div class="metric-label"><span>単勝オッズ</span></div>
-              <div>
-                <input type="number" class="odds-input" step="0.1" min="1.0" max="999.9" value="${odds}" data-idx="${idx}" aria-label="${escapeHtml(h.name)}の単勝オッズ">
-                <span style="font-weight:700;margin-left:4px;">倍</span>
-              </div>
+              <div class="metric-label">単勝オッズ</div>
+              ${oddsEditor(h, "card-" + i)}
             </div>
-
             <div class="metric-box">
-              <div class="metric-label">
-                <span>市場基準勝率</span>
-                <button type="button" class="btn-help" data-help="market" aria-label="市場基準勝率の説明">？</button>
-              </div>
-              <div>
-                <span class="mkt-val">${mkt.toFixed(1)}%</span>
-                <span class="diff-label" style="color:${diffColor};">(${diffStr})</span>
-              </div>
+              <div class="metric-label">市場基準勝率</div>
+              <strong class="mkt-val" data-value="market"></strong>
+              <span class="allocation-detail">80÷オッズ <span data-value="raw"></span></span>
             </div>
-
             <div class="metric-box">
-              <div class="metric-label"><span>独自勝率（0.5%刻み）</span></div>
-              <div class="win-adjust">
-                <button type="button" class="step-btn" data-idx="${idx}" data-delta="-0.5" aria-label="独自勝率を0.5%下げる">－</button>
-                <input type="number" class="win-input" step="0.5" min="0" max="100" value="${win.toFixed(1)}" data-idx="${idx}" aria-label="${escapeHtml(h.name)}の独自勝率">
-                <span style="font-weight:700;">%</span>
-                <button type="button" class="step-btn" data-idx="${idx}" data-delta="0.5" aria-label="独自勝率を0.5%上げる">＋</button>
-              </div>
+              <div class="metric-label">増減調整（pp）</div>
+              ${deltaEditor(h, "card-" + i)}
             </div>
           </div>
-
+          <div class="metric-box">
+            <div class="metric-label">勝率配分案</div>
+            <strong class="mkt-val" data-value="effective"></strong>
+            <span class="allocation-detail" data-value="correction" hidden></span>
+          </div>
+          ${guardControls(h)}
+          <span class="rebound-badge" data-value="reboundBadge" tabindex="0" hidden>REBOUND_OK</span>
+          <p class="card-desc" data-value="reboundText"></p>
+          <details class="rebound-fields">
+            <summary>反発判定の基準オッズを設定</summary>
+            <div class="rebound-editor">
+              <label>基準オッズ（倍）
+                <input class="odds-input" type="number" min="${MIN_ODDS}" max="${MAX_ODDS}" step="any" inputmode="decimal" data-field="initialOdds"
+                  aria-label="${escapeHtml(h.name)}の基準オッズ" aria-describedby="initial-odds-error-${i}">
+              </label>
+              <label>基準時点・ラベル（任意）
+                <input type="text" class="reason-input" data-field="initialOddsTime" placeholder="例  前日 20:00"
+                  aria-label="${escapeHtml(h.name)}の基準時点">
+              </label>
+            </div>
+            <span class="allocation-error" id="initial-odds-error-${i}" data-value="initialOddsError" hidden>基準オッズは1.0〜999.9倍です。</span>
+          </details>
+          <div class="reason-label">
+            <span class="metric-label">第1層根拠（削る・足す理由）</span>
+            ${reasonEditor(h, 2)}
+          </div>
           <div class="tag-row">${tagButtons}</div>
         </article>
       `;
     }).join("");
   }
 
-  function renderRadar() {
+  function updateHorseControls(allocation) {
+    document.querySelectorAll("[data-horse-row]").forEach(view => {
+      const i = Number(view.dataset.horseRow);
+      const horse = state.horses[i];
+      const row = allocation.rows[i];
+      const odds = view.querySelector('[data-field="odds"]');
+      const delta = view.querySelector('[data-field="adjustDelta"]');
+      const reason = view.querySelector('[data-field="reason"]');
+      const strength = view.querySelector('[data-field="strengthFlag"]');
+      const lock = view.querySelector('[data-field="floorLock"]');
+      if (odds !== document.activeElement) odds.value = row.odds ?? "";
+      if (delta !== document.activeElement) delta.value = row.validDelta ? signedDecimal(horse.adjustDelta) : "";
+      if (reason !== document.activeElement) reason.value = horse.reason || "";
+      odds.setAttribute("aria-invalid", String(row.odds === null));
+      delta.setAttribute("aria-invalid", String(!row.validDelta));
+      strength.checked = horse.strengthFlag === true;
+      lock.checked = row.floor > 0;
+      lock.disabled = !state.floorLockEnabled || !row.eligible;
+
+      const labels = {
+        rank: row.rank ? row.rank + "人気" : "人気 —",
+        raw: row.odds === null ? "—" : percent(row.raw),
+        market: row.odds === null ? "—" : percent(row.displayMarket),
+        effective: percent(shownEffective(allocation, i)),
+        correction: row.correction > EPS
+          ? `調整後 ${percent(row.requested)} ／ ロック ${signedDecimal(row.correction)} pp` : ""
+      };
+      Object.entries(labels).forEach(([key, text]) => {
+        view.querySelector(`[data-value="${key}"]`).textContent = text;
+      });
+      view.querySelector('[data-value="correction"]').hidden = row.correction <= EPS;
+      view.querySelector('[data-value="oddsError"]').hidden = row.odds !== null;
+      view.querySelector('[data-value="deltaError"]').hidden = row.validDelta;
+
+      const warning = view.querySelector('[data-value="warning"]');
+      const target = row.popular ? "4〜6番人気帯" : "実力裏付けありの馬";
+      const warningText = `⚠️ ${target}の勝率が10.00%未満です。連系候補のヒモ抜けリスクがあります。`;
+      warning.hidden = !row.eligible || row.effective === null || row.effective >= WIN_FLOOR - EPS;
+      warning.textContent = view.matches("tr") ? "⚠️ 10%未満" : warningText;
+      warning.title = warningText;
+      warning.setAttribute("aria-label", warningText);
+
+      const reboundBadge = view.querySelector('[data-value="reboundBadge"]');
+      const reboundText = describeRebound(horse, row);
+      reboundBadge.hidden = !row.reboundOk;
+      reboundBadge.title = reboundText + "。指定した基準からのオッズ反発を検知した候補です。連系の相手枠を検討する目安になります。";
+      reboundBadge.setAttribute("aria-label", "REBOUND_OK " + reboundBadge.title);
+      const initialOdds = view.querySelector('[data-field="initialOdds"]');
+      if (initialOdds) {
+        const initialTime = view.querySelector('[data-field="initialOddsTime"]');
+        if (initialOdds !== document.activeElement && !initialOdds.hasAttribute("aria-invalid")) {
+          initialOdds.value = row.initialOdds ?? "";
+        }
+        if (initialTime !== document.activeElement) initialTime.value = horse.initialOddsTime || "";
+        view.querySelector('[data-value="reboundText"]').textContent = reboundText;
+      }
+
+      const ev = view.querySelector('[data-value="ev"]');
+      ev.classList.toggle("allocation-ev-high", row.ev !== null && row.ev + EPS >= WIN_EV_HIGHLIGHT);
+      if (row.ev !== null && ev.dataset.format === "pill") ev.innerHTML = formatEvDisplay(row.ev);
+      else ev.textContent = row.ev === null ? "—" : row.ev.toFixed(2);
+    });
+  }
+
+  function renderRadar(allocation) {
     const wrap = document.getElementById("radarContainer");
-    const mktProbs = computeMarketProbs(state.horses);
-    if (!state.horses.length) {
-      wrap.innerHTML = `<p class="card-desc">データがありません。</p>`;
+    const detailBox = document.getElementById("radarDetailBox");
+    const plotted = allocation.rows.map((row, i) => ({ ...row, i, horse: state.horses[i] }))
+      .filter(row => row.effective !== null);
+    if (!plotted.length) {
+      wrap.innerHTML = `<p class="card-desc">表示できる勝率配分案がありません。</p>`;
+      detailBox.textContent = "有効な単勝オッズと増減調整を入力してください。";
       return;
     }
 
@@ -1675,8 +2532,8 @@
     const plotW = w - padL - padR;
     const plotH = h - padT - padB;
 
-    const maxWin = Math.max(30, ...state.horses.map(horse => Number(horse.winPct) || 0)) * 1.1;
-    const maxOdds = Math.max(40, ...state.horses.map(horse => Math.min(80, Number(horse.odds) || 1))) * 1.08;
+    const maxWin = Math.max(30, ...plotted.map(row => row.effective)) * 1.1;
+    const maxOdds = Math.max(40, ...plotted.map(row => Math.min(80, row.odds))) * 1.08;
 
     const xScale = val => padL + (Math.max(0, val) / maxWin) * plotW;
     const yScale = oddsVal => padT + plotH - (Math.min(maxOdds, Math.max(0, oddsVal)) / maxOdds) * plotH;
@@ -1694,7 +2551,7 @@
     }
 
     let curvePts = [];
-    for (let p = 2.0; p <= maxWin; p += 0.5) {
+    for (let p = 2.0; p <= Math.min(100, maxWin); p += 0.5) {
       const breakevenOdds = 100 / p;
       if (breakevenOdds <= maxOdds) {
         curvePts.push(`${xScale(p).toFixed(1)},${yScale(breakevenOdds).toFixed(1)}`);
@@ -1705,17 +2562,14 @@
          <text x="${padL + plotW - 6}" y="${padT + 18}" text-anchor="end" font-size="13" font-weight="700" fill="#92400E">損益分岐ライン (EV = 1.00)</text>`
       : "";
 
-    const dots = state.horses.map((horse, idx) => {
-      const win = Number(horse.winPct) || 0;
-      const odds = Number(horse.odds) || 1;
-      const ev = (win / 100) * odds;
-      const cx = xScale(win);
+    const dots = plotted.map(({ horse, effective, odds, ev, i }) => {
+      const cx = xScale(effective);
       const cy = yScale(odds);
       const isSel = Number(state.selectedRadarNum) === Number(horse.num);
       const fill = getEvMeta(ev).fill;
       const ring = isSel ? `<circle cx="${cx}" cy="${cy}" r="18" fill="none" stroke="#1E293B" stroke-width="3"/>` : "";
       return `
-        <g class="radar-dot" data-num="${horse.num}" data-idx="${idx}" style="cursor:pointer;">
+        <g class="radar-dot" data-num="${horse.num}" data-idx="${i}" style="cursor:pointer;">
           ${ring}
           <circle cx="${cx}" cy="${cy}" r="13" fill="${fill}" stroke="#FFFFFF" stroke-width="2"/>
           <text x="${cx}" y="${cy + 5}" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF">${horse.num}</text>
@@ -1728,7 +2582,7 @@
         <rect x="${padL}" y="${padT}" width="${plotW}" height="${plotH}" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1.2"/>
         ${gridLines}
         ${curvePath}
-        <text x="${padL + plotW / 2}" y="${h - 8}" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">独自勝率（%） → 右に行くほど高い</text>
+        <text x="${padL + plotW / 2}" y="${h - 8}" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B">勝率配分案（%） → 右に行くほど高い</text>
         <text x="16" y="${padT + plotH / 2}" text-anchor="middle" font-size="14" font-weight="700" fill="#1E293B" transform="rotate(-90 16 ${padT + plotH / 2})">単勝オッズ（倍）</text>
         ${dots}
       </svg>
@@ -1737,30 +2591,36 @@
     wrap.querySelectorAll(".radar-dot").forEach(g => {
       g.addEventListener("click", () => {
         state.selectedRadarNum = Number(g.dataset.num);
-        renderRadar();
+        renderRadar(allocation);
       });
     });
 
-    const targetIdx = state.horses.findIndex(horse => Number(horse.num) === Number(state.selectedRadarNum));
-    const detailBox = document.getElementById("radarDetailBox");
-    if (targetIdx >= 0) {
-      const h = state.horses[targetIdx];
-      const win = Number(h.winPct) || 0;
-      const odds = Number(h.odds) || 1;
-      const mkt = mktProbs[targetIdx] || 0;
-      const ev = (win / 100) * odds;
-      const diff = win - mkt;
-      const tagLabels = (h.tags || []).map(k => {
-        const found = TAGS.find(t => t.key === k);
-        return found ? found.label : k;
-      }).join(" / ") || "なし";
+    const selected = plotted.find(row => row.horse.num === state.selectedRadarNum) || plotted[0];
+    const { horse, odds, effective, displayMarket, base, ev, i } = selected;
+    const tagLabels = horse.tags.map(key => TAGS.find(tag => tag.key === key)?.label || key).join(" / ") || "なし";
+    detailBox.innerHTML = `
+      <strong>${horse.num}番 ${escapeHtml(horse.name)}（印 ${horse.mark}）</strong> ${formatEvDisplay(ev)}<br>
+      単勝オッズ <strong>${odds}倍</strong> ／ 勝率配分案 <strong>${percent(shownEffective(allocation, i))}</strong>
+      （市場基準 ${percent(displayMarket)}、差 ${signedDecimal(effective - base)} pp）<br>
+      根拠タグ ${escapeHtml(tagLabels)}
+    `;
+  }
 
-      detailBox.innerHTML = `
-        <strong>${h.num}番 ${escapeHtml(h.name)}（印：${h.mark}）</strong> ${formatEvDisplay(ev)}<br>
-        単勝オッズ <strong>${odds.toFixed(1)}倍</strong> ／ 独自勝率 <strong>${win.toFixed(1)}%</strong>（市場基準 ${mkt.toFixed(1)}%、差 ${diff >= 0 ? "+" : ""}${diff.toFixed(1)}%）<br>
-        根拠タグ：${escapeHtml(tagLabels)}
-      `;
-    }
+  function describeRebound(horse, row) {
+    if (row.initialOdds === null) return "REBOUND_OK 未判定（基準オッズ未設定）";
+    if (row.reboundPct === null) return "REBOUND_OK 未判定（現在オッズを確認）";
+    const time = horse.initialOddsTime || "時点ラベル未入力";
+    return `${row.reboundOk ? "" : "REBOUND_OK 対象外 ／ "}${signedDecimal(row.reboundPct)}% ／ ${row.rank}番人気 ／ 基準 ${row.initialOdds}倍（${time}）`;
+  }
+
+  function renderReboundDashboard(allocation) {
+    const matches = allocation.rows.map((row, i) => ({ row, horse: state.horses[i] })).filter(({ row }) => row.reboundOk);
+    const pending = allocation.rows.filter(row => row.reboundPct === null).length;
+    document.getElementById("reboundDashboard").innerHTML =
+      `<strong>REBOUND_OK（指定基準からの反発）</strong>　${matches.length}頭 ／ 未判定 ${pending}頭`
+      + `<div>基準比15.00%以上かつ現在4〜7番人気の馬を表示します。オッズ反発の観測候補です。</div>`
+      + (matches.length ? `<ul class="paste-preview-list">${matches.map(({ horse, row }) =>
+        `<li>${horse.num}番 ${escapeHtml(horse.name)}　${escapeHtml(describeRebound(horse, row))}</li>`).join("")}</ul>` : "");
   }
 
   function renderDriftDashboard() {
@@ -1768,13 +2628,14 @@
     const chartEl = document.getElementById("driftChartContainer");
     const detailEl = document.getElementById("driftDetailBox");
 
-    if (!state.horses.length) {
+    const statsList = state.horses.map(horse => ({ horse, ...getDriftStats(horse) })).filter(s => s.hist.length);
+    if (!statsList.length) {
       summaryEl.innerHTML = "";
-      chartEl.innerHTML = `<p class="card-desc">データがありません。</p>`;
+      chartEl.innerHTML = `<p class="card-desc">表示できるオッズがありません。</p>`;
+      detailEl.textContent = "";
       return;
     }
 
-    const statsList = state.horses.map((h, idx) => ({ horse: h, idx, ...getDriftStats(h) }));
     const reboundHorses = statsList.filter(s => s.isRebound);
     const biggestRise = [...statsList].sort((a, b) => b.totalShiftPct - a.totalShiftPct)[0];
     const biggestDrop = [...statsList].sort((a, b) => a.totalShiftPct - b.totalShiftPct)[0];
@@ -1907,62 +2768,60 @@
     return res;
   }
 
-  function harvilleProb(horses, indices, betType, biasFactor) {
-    const total = Math.max(0.0001, getTotalWinPct());
-    const allP = horses.map(h => Math.max(0.0001, (Number(h.winPct) || 0) / total));
-    const p = indices.map(i => allP[i]);
+  function orderedTriples([a, b, c]) {
+    return [[a, b, c], [a, c, b], [b, a, c], [b, c, a], [c, a, b], [c, b, a]];
+  }
 
-    if (betType === "win") {
-      return p[0];
-    }
-    if (betType === "quinella") {
-      const [a, b] = [p[0], p[1]];
-      const pAB = a * (b / Math.max(0.0001, 1 - a));
-      const pBA = b * (a / Math.max(0.0001, 1 - b));
-      return (pAB + pBA) * biasFactor;
-    }
-    if (betType === "wide") {
-      const [a, b] = [p[0], p[1]];
-      const top2 = a * (b / Math.max(0.0001, 1 - a)) + b * (a / Math.max(0.0001, 1 - b));
-      let thirdSum = 0;
-      for (let c = 0; c < allP.length; c++) {
-        if (c === indices[0] || c === indices[1]) continue;
-        const pc = allP[c];
-        thirdSum += a * (pc / Math.max(0.0001, 1 - a)) * (b / Math.max(0.0001, 1 - a - pc));
-        thirdSum += b * (pc / Math.max(0.0001, 1 - b)) * (a / Math.max(0.0001, 1 - b - pc));
-        thirdSum += pc * (a / Math.max(0.0001, 1 - pc)) * (b / Math.max(0.0001, 1 - pc - a));
-        thirdSum += pc * (b / Math.max(0.0001, 1 - pc)) * (a / Math.max(0.0001, 1 - pc - b));
+  function orderedFinishProb(allP, [a, b, c]) {
+    const first = allP[a];
+    const second = allP[b];
+    if (first <= 0 || second <= 0) return 0;
+    const afterFirst = allP.reduce((sum, p, i) => i === a ? sum : sum + p, 0);
+    if (afterFirst <= 0) return 0;
+    const top2 = first * (second / afterFirst);
+    if (c === undefined) return top2;
+    if (allP[c] <= 0) return 0;
+    const afterSecond = allP.reduce((sum, p, i) => i === a || i === b ? sum : sum + p, 0);
+    return afterSecond > 0 ? top2 * (allP[c] / afterSecond) : 0;
+  }
+
+  function harvilleProb(allP, indices, betType, biasFactor) {
+    if (betType === "win") return allP[indices[0]];
+    let probability = 0;
+    if (betType === "quinella" || betType === "wide") {
+      const [a, b] = indices;
+      probability = orderedFinishProb(allP, [a, b]) + orderedFinishProb(allP, [b, a]);
+      if (betType === "wide") {
+        for (let c = 0; c < allP.length; c++) {
+          if (c === a || c === b) continue;
+          probability += orderedFinishProb(allP, [a, c, b]) + orderedFinishProb(allP, [b, c, a])
+            + orderedFinishProb(allP, [c, a, b]) + orderedFinishProb(allP, [c, b, a]);
+        }
       }
-      return Math.min(0.95, (top2 + thirdSum) * biasFactor);
+    } else if (betType === "trio") {
+      probability = sumValues(orderedTriples(indices).map(order => orderedFinishProb(allP, order)));
+    } else if (betType === "trifecta") {
+      probability = orderedFinishProb(allP, indices);
     }
-    if (betType === "trio") {
-      const [i0, i1, i2] = indices;
-      const perms = [
-        [i0, i1, i2], [i0, i2, i1],
-        [i1, i0, i2], [i1, i2, i0],
-        [i2, i0, i1], [i2, i1, i0]
-      ];
-      let sum = 0;
-      for (const [x, y, z] of perms) {
-        const px = allP[x];
-        const py = allP[y];
-        const pz = allP[z];
-        sum += px * (py / Math.max(0.0001, 1 - px)) * (pz / Math.max(0.0001, 1 - px - py));
-      }
-      return Math.min(0.9, sum * biasFactor);
+    return Math.min(1, probability * biasFactor);
+  }
+
+  function validateBetProbabilities(allocation, probabilities, betType, k) {
+    if (allocation.problem) return allocation.problem;
+    if (!allocation.balanced || probabilities.some(p => !Number.isFinite(p) || p < 0 || p > 1 + EPS / 100)) {
+      return "勝率配分案の合計を100.00%に揃えてください。";
     }
-    if (betType === "trifecta") {
-      const [a, b, c] = p;
-      return Math.min(0.8, a * (b / Math.max(0.0001, 1 - a)) * (c / Math.max(0.0001, 1 - a - b)) * biasFactor);
+    if (probabilities.length < k) return `この券種の計算には${k}頭以上が必要です。`;
+    const needed = betType === "wide" ? Math.min(3, probabilities.length) : k;
+    if (probabilities.filter(p => p > 0).length < needed) {
+      return `この券種の計算には正の勝率を持つ馬が${needed}頭以上必要です。`;
     }
-    return 0;
+    return "";
   }
 
   function estimateComboOdds(horses, indices, betType, mktProbs) {
+    if (betType === "win") return horses[indices[0]].odds;
     const mp = indices.map(i => Math.max(0.0005, (mktProbs[i] || 0.1) / 100));
-    const o = indices.map(i => Math.max(1.1, Number(horses[i].odds) || 1.1));
-
-    if (betType === "win") return o[0];
     if (betType === "quinella") {
       const raw = (1 / Math.max(0.001, mp[0] * mp[1] * 2.2)) * 0.78;
       return Math.max(1.5, Math.min(999.9, raw));
@@ -2010,12 +2869,21 @@
     return items.map((it, idx) => ({ ...it, stake: counts[idx] * 100 }));
   }
 
-  function renderBets() {
+  function renderBets(allocation = computeWinAllocation(state.horses, state.floorLockEnabled)) {
     const minEv = Number(state.minEv) || 1.0;
     const minHitPct = Number(state.minHit) || 0;
     const budget = Number(state.budget) || 0;
     const betType = state.betType;
-    const mktProbs = computeMarketProbs(state.horses);
+    const isWin = betType === "win";
+    const oddsLabel = isWin ? "単勝オッズ" : "推定オッズ";
+    const evLabel = isWin ? "単勝EV" : "概算EV";
+    const k = isWin ? 1 : (betType === "trio" || betType === "trifecta" ? 3 : 2);
+    document.getElementById("betOddsHeader").textContent = oddsLabel;
+    document.getElementById("betEvHeader").textContent = evLabel;
+    document.getElementById("betModelNote").textContent = isWin
+      ? "入力した単勝オッズと勝率配分案から算出します。"
+      : "連系のオッズは単勝市場基準から推定します。EVと払戻は概算です。"
+        + (k === 3 ? " 3連系の候補は勝率配分案の上位10頭から生成します。" : "");
 
     document.getElementById("minEvLabel").textContent = minEv.toFixed(2) + " 以上";
     document.getElementById("minHitLabel").textContent = minHitPct.toFixed(1) + "% 以上";
@@ -2024,24 +2892,40 @@
       btn.classList.toggle("active", btn.dataset.type === betType);
     });
 
-    const k = betType === "win" ? 1 : ((betType === "trio" || betType === "trifecta") ? 3 : 2);
+    const emptyGuide = document.getElementById("betEmptyGuide");
+    const tbody = document.getElementById("betTableBody");
+    const mobileBox = document.getElementById("betCardsMobile");
+    const copyButton = document.getElementById("btnCopyBets");
+    const probabilities = allocation.rows.map(row => row.effective === null ? NaN : row.effective / 100);
+    const problem = validateBetProbabilities(allocation, probabilities, betType, k);
+    if (problem) {
+      emptyGuide.style.display = "block";
+      emptyGuide.innerHTML = `<div class="empty-bet-box">${escapeHtml(problem)}</div>`;
+      document.getElementById("betSummaryLine").textContent = "買い目配分を停止中";
+      tbody.innerHTML = "";
+      mobileBox.innerHTML = "";
+      copyButton.disabled = true;
+      lastAllocatedBets = [];
+      return;
+    }
+
     const sep = betType === "trifecta" ? " → " : " - ";
-    const activeIdxs = state.horses
-      .map((h, i) => ({ i, w: Number(h.winPct) || 0 }))
-      .sort((a, b) => b.w - a.w)
+    const activeIdxs = probabilities.map((p, i) => ({ p, i }))
+      .sort((a, b) => b.p - a.p || state.horses[a.i].num - state.horses[b.i].num)
       .slice(0, k === 3 ? 10 : state.horses.length)
       .map(x => x.i);
 
-    const indexTuples = generateCombinations(activeIdxs, k);
+    const combinations = generateCombinations(activeIdxs, k);
+    const indexTuples = betType === "trifecta" ? combinations.flatMap(orderedTriples) : combinations;
 
     const candidates = [];
     for (const idxs of indexTuples) {
       const biasFactor = getBiasFactor(state.horses, idxs);
-      const prob = harvilleProb(state.horses, idxs, betType, biasFactor);
+      const prob = harvilleProb(probabilities, idxs, betType, biasFactor);
       const hitPct = prob * 100;
-      const oddsEst = estimateComboOdds(state.horses, idxs, betType, mktProbs);
+      const oddsEst = estimateComboOdds(state.horses, idxs, betType, allocation.market.bases);
       const ev = prob * oddsEst;
-      if (ev >= minEv && hitPct >= minHitPct) {
+      if (ev + EPS >= minEv && hitPct + EPS >= minHitPct) {
         const label = idxs.map(i => `${state.horses[i].num}(${shortenName(state.horses[i].name)})`).join(sep);
         candidates.push({ label, prob, hitPct, oddsEst, ev });
       }
@@ -2055,10 +2939,7 @@
     document.getElementById("betSummaryLine").textContent =
       `抽出買い目：${allocated.length}点 / 配分合計：${totalStake.toLocaleString()}円（予算 ${budget.toLocaleString()}円）`;
 
-    const emptyGuide = document.getElementById("betEmptyGuide");
-    const tbody = document.getElementById("betTableBody");
-    const mobileBox = document.getElementById("betCardsMobile");
-
+    copyButton.disabled = !allocated.length;
     if (!allocated.length) {
       emptyGuide.style.display = "block";
       emptyGuide.innerHTML = `
@@ -2092,7 +2973,7 @@
           <td><strong>#${idx + 1}</strong></td>
           <td><strong>${escapeHtml(item.label)}</strong></td>
           <td>${item.hitPct.toFixed(2)}%</td>
-          <td>${item.oddsEst.toFixed(1)}倍</td>
+          <td>${isWin ? item.oddsEst : item.oddsEst.toFixed(1)}倍</td>
           <td>${formatEvDisplay(item.ev)}</td>
           <td><strong>${item.stake.toLocaleString()}円</strong></td>
           <td>${payout.toLocaleString()}円</td>
@@ -2106,10 +2987,10 @@
         <div class="bet-m-card">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
             <strong>#${idx + 1} ${escapeHtml(item.label)}</strong>
-            ${formatEvDisplay(item.ev)}
+            <span>${evLabel} ${formatEvDisplay(item.ev)}</span>
           </div>
           <div style="font-size:14px;color:var(--text-sub);">
-            的中率目安：<strong>${item.hitPct.toFixed(2)}%</strong> ／ オッズ目安：<strong>${item.oddsEst.toFixed(1)}倍</strong>
+            的中率目安 <strong>${item.hitPct.toFixed(2)}%</strong> ／ ${oddsLabel} <strong>${isWin ? item.oddsEst : item.oddsEst.toFixed(1)}倍</strong>
           </div>
           <div style="margin-top:6px;font-size:16px;font-weight:700;color:var(--navy);">
             推奨投資：${item.stake.toLocaleString()}円 → 的中時払戻目安：${payout.toLocaleString()}円
@@ -2147,7 +3028,7 @@
           <div class="custom-actions">
             <button type="button" class="btn-secondary btn-save-custom" data-sidx="${sIdx}">💾 このスロットを保存</button>
             <button type="button" class="${selected ? "btn-success" : "btn-primary"} btn-apply-custom" data-sidx="${sIdx}">
-              ${selected ? "適用中（再反映）" : "この配分を適用する"}
+              ${selected ? "適用中の配分を確認" : "この配分を確認"}
             </button>
           </div>
         </div>
@@ -2169,10 +3050,7 @@
         const sIdx = Number(btn.dataset.sidx);
         readCustomSlotFromDom(sIdx);
         saveCustomSlots();
-        state.preset = customSlots[sIdx].id;
-        applyPresetWeights();
-        renderAll();
-        showToast(customSlots[sIdx].name + " を適用したで");
+        previewPresetWeights(customSlots[sIdx]);
       });
     });
 
@@ -2193,7 +3071,7 @@
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
               <button type="button" class="btn-secondary btn-toggle-acc" data-acc="acc-p-${p.id}">詳細を見る ▼</button>
               <button type="button" class="${selected ? "btn-success" : "btn-primary"} btn-select-preset" data-preset="${p.id}">
-                ${selected ? "選択中（反映する）" : "この性格にする"}
+                ${selected ? "適用中の配分を確認" : "この印配分を確認"}
               </button>
             </div>
           </div>
@@ -2242,10 +3120,7 @@
         });
       } else {
         btn.addEventListener("click", () => {
-          state.preset = btn.dataset.preset;
-          applyPresetWeights();
-          renderAll();
-          showToast(PRESETS[state.preset].name + " を適用したで");
+          previewPresetWeights(PRESETS[btn.dataset.preset]);
         });
       }
     });
@@ -2280,119 +3155,367 @@
     });
   }
 
-  function applyPresetWeights() {
-    const weights = getActivePresetWeights();
-    if (!state.horses.length) return;
+  const racePanel = document.getElementById("panel-race");
+  const raceInputs = [...racePanel.querySelectorAll("[data-race-key]")];
 
-    const counts = {};
-    state.horses.forEach(h => {
-      counts[h.mark] = (counts[h.mark] || 0) + 1;
-    });
+  function resetRaceContext(title) {
+    state.raceTitle = title;
+    state.raceCharacter = null;
+    state.paceScenario = null;
+    state.raceConditions = {};
+    state.riskTriggers = [];
+    state.riskMemo = "";
+  }
 
-    const rawAssign = state.horses.map(h => {
-      const base = weights[h.mark] ?? 2.0;
-      const cnt = counts[h.mark] || 1;
-      if (h.mark === "△" || h.mark === "☆" || h.mark === "✓") {
-        return Math.max(0, base / Math.max(1, cnt / 2));
-      }
-      return base;
-    });
-
-    const sum = rawAssign.reduce((a, b) => a + b, 0);
-    if (sum > 0) {
-      state.horses.forEach((h, i) => {
-        h.winPct = Math.round(((rawAssign[i] / sum) * 100) * 2) / 2;
-      });
-      normalizeWinPct();
+  function readRaceCondition(input, value) {
+    if (input.tagName === "SELECT") {
+      return [...input.options].some(option => option.value === value) ? value : "";
     }
+    if (input.type === "number") {
+      const n = readDecimal(value);
+      return Number.isInteger(n) && n >= Number(input.min) && n <= Number(input.max) ? n : "";
+    }
+    if (typeof value !== "string") return "";
+    if (input.type === "date" && value) {
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(value) ? Date.parse(value) : NaN;
+      return Number.isFinite(date) && new Date(date).toISOString().startsWith(value) ? value : "";
+    }
+    return value;
+  }
+
+  function suggestRaceCharacters(c) {
+    const ageFit = c.age === "threeAutumn" || c.age === "older";
+    const graded = ["g1", "g2", "g3"].includes(c.raceClass);
+    const gradeName = { g1: "GⅠ", g2: "GⅡ", g3: "GⅢ" }[c.raceClass];
+    const reasons = {
+      highVariance: [
+        c.age === "two" && "2歳戦",
+        c.age === "threeSpring" && c.career === "shallow" && "キャリアが浅い馬の多い3歳春戦",
+        c.weight === "handicap" && c.fieldSize >= 16 && `${c.fieldSize}頭のハンデ戦（16頭以上）`
+      ],
+      ability: [
+        ["twoWin", "threeWin"].includes(c.raceClass) && "2勝〜3勝クラス",
+        ageFit && graded && c.weight === "fixed" && `3歳秋〜古馬の定量${gradeName}`,
+        ageFit && graded && c.weight === "separate" && `3歳秋〜古馬の別定${gradeName}`,
+        ageFit && graded && !c.weight && `3歳秋〜古馬の${gradeName}（定量・別定か確認が必要）`
+      ],
+      endurance: [
+        c.surface === "turf" && c.distance >= 2400 && `芝${c.distance}m（2400m以上）`,
+        c.going === "heavy" && "重馬場",
+        c.going === "sloppy" && "不良馬場",
+        c.toughCourse === "confirmed" && "洋芝・急坂などタフなコース条件を確認"
+      ]
+    };
+    const candidates = Object.entries(reasons).map(([key, tests]) => [key, tests.filter(Boolean)])
+      .filter(([, matches]) => matches.length);
+    const complete = c.age && c.raceClass && c.weight && c.surface && c.distance && c.going && c.toughCourse
+      && (c.age !== "threeSpring" || c.career) && (c.weight !== "handicap" || c.fieldSize);
+    return { candidates, complete };
+  }
+
+  function suggestPaceScenarios(c) {
+    const reasons = {
+      late: c.paceEvidence === "late" ? ["隊列・過去ラップに前半を抑えられる材料"] : [],
+      steady: c.paceEvidence === "steady" ? ["隊列・過去ラップに高い巡航水準が続く材料"] : [],
+      early: c.paceEvidence === "early" ? ["隊列・過去ラップに前半から競り合う材料"] : []
+    };
+    if (c.frontRunners >= 4) reasons.early.push(`逃げ・先行想定が${c.frontRunners}頭。主張の重なりを確認`);
+    return Object.entries(reasons).filter(([, matches]) => matches.length);
+  }
+
+  function paceDiagram(scenario) {
+    return `<svg class="scenario-chart" viewBox="0 0 326 113" role="img" aria-label="${scenario.name}の相対的な速度イメージ。序盤、中盤、終盤">
+      <text x="12" y="16" font-size="12" fill="#475569">相対的な速度イメージ</text>
+      <path d="M26 24 V86 H306" fill="none" stroke="#64748B"/>
+      <path d="M26 43 H306 M26 65 H306 M166 24 V86" fill="none" stroke="#CBD5E1" stroke-dasharray="3 3"/>
+      <path d="${scenario.path}" fill="none" stroke="#166534" stroke-width="3" stroke-linecap="round"/>
+      <text x="28" y="104" font-size="12" fill="#475569">序盤 →</text>
+      <text x="140" y="104" font-size="12" fill="#475569">中盤 →</text>
+      <text x="270" y="104" font-size="12" fill="#475569">終盤</text>
+    </svg><span class="scenario-caption">概念図。実測ラップ・予測ラップではありません</span>`;
+  }
+
+  function setupRaceChoices() {
+    document.getElementById("raceCharacterPicks").innerHTML = Object.entries(RACE_CHARACTERS).map(([key, type]) => `
+      <label class="race-option">
+        <span class="race-option-name"><input type="radio" name="raceCharacter" value="${key}" aria-label="${type.name}">${type.name}</span>
+        <span><strong>条件</strong>　${type.conditions}</span>
+        <span><strong>特徴</strong>　${type.features}</span>
+        <span><strong>方針</strong>　${type.policy}</span>
+      </label>`).join("");
+    document.getElementById("paceScenarioPicks").innerHTML = Object.entries(PACE_SCENARIOS).map(([key, scenario]) => `
+      <label class="race-option">
+        <span class="race-option-name"><input type="radio" name="paceScenario" value="${key}" aria-label="${scenario.name}">${scenario.name}</span>
+        ${paceDiagram(scenario)}
+        <span><strong>確認項目</strong>　${scenario.focus.join("／")}</span>
+      </label>`).join("");
+    document.getElementById("riskTriggers").innerHTML = Object.entries(RISK_TRIGGERS).map(([key, risk]) => `
+      <label class="risk-option">
+        <input type="checkbox" data-risk="${key}" aria-label="${risk.name}">
+        <span><strong>${risk.name}</strong>${risk.review}</span>
+      </label>`).join("");
+  }
+
+  function raceContextSummary() {
+    const character = RACE_CHARACTERS[state.raceCharacter];
+    const pace = PACE_SCENARIOS[state.paceScenario];
+    const risks = state.riskTriggers.map(key => RISK_TRIGGERS[key]);
+    const focus = [...new Set([...(character?.focus || []), ...(pace?.focus || [])])];
+    return [
+      ["レース性格", character?.name],
+      ["方針", character?.policy],
+      ["展開", pace?.name],
+      ["重点確認", focus.join("／")],
+      ["構造リスク", risks.map(risk => risk.short).join("／")],
+      ["リスクメモ", state.riskMemo.trim()]
+    ].filter(([, value]) => value);
+  }
+
+  function showSuggestions(id, candidates, definitions, empty) {
+    const box = document.getElementById(id);
+    box.innerHTML = candidates.length
+      ? `<strong>条件からの候補</strong><ul>${candidates.map(([key, reasons]) =>
+        `<li><strong>${definitions[key].name}</strong>　${escapeHtml(reasons.join("／"))}</li>`
+      ).join("")}</ul>`
+      : escapeHtml(empty);
+  }
+
+  function renderRaceAnalysis() {
+    const { candidates, complete } = suggestRaceCharacters(state.raceConditions);
+    showSuggestions("raceCharacterSuggestions", candidates, RACE_CHARACTERS,
+      complete ? "入力された条件で該当する候補はありません。" : "情報不足。年齢、距離、馬場など確認できた条件を入力してください。");
+    showSuggestions("paceSuggestions", suggestPaceScenarios(state.raceConditions), PACE_SCENARIOS,
+      "展開を提案する情報が不足しています。脚質・隊列・過去ラップの材料を入力するか、シナリオを手動で選択してください。");
+
+    const scenario = PACE_SCENARIOS[state.paceScenario];
+    const checks = state.riskTriggers.map(key => RISK_TRIGGERS[key].review);
+    if (scenario) checks.unshift("選択した展開で " + scenario.focus.join("／") + " を確認。");
+    document.getElementById("riskReview").innerHTML = checks.length
+      ? `<strong>確認する観点</strong><ul>${checks.map(check => `<li>${escapeHtml(check)}</li>`).join("")}</ul>`
+      : "展開やリスクを選ぶと確認する観点が表示されます。";
+
+    const context = raceContextSummary();
+    document.getElementById("allocationRaceContext").hidden = !context.length;
+    document.getElementById("raceContextValues").innerHTML = context.map(([label, value]) =>
+      `<dt>${label}</dt><dd>${escapeHtml(value)}</dd>`).join("");
+    document.getElementById("raceMetaLabel").textContent = state.raceTitle || "レース観測データ";
+  }
+
+  function renderRaceWorkspace() {
+    raceInputs.forEach(input => { input.value = state.raceConditions[input.dataset.raceKey] ?? ""; });
+    document.getElementById("editRaceTitle").value = state.raceTitle;
+    document.getElementById("riskMemo").value = state.riskMemo;
+    racePanel.querySelectorAll("input[type=radio]").forEach(input => {
+      input.checked = state[input.name] === input.value;
+    });
+    racePanel.querySelectorAll("[data-risk]").forEach(input => {
+      input.checked = state.riskTriggers.includes(input.dataset.risk);
+    });
+    renderRaceAnalysis();
+  }
+
+  racePanel.addEventListener("input", event => {
+    const input = event.target;
+    if (input.id === "editRaceTitle") state.raceTitle = input.value;
+    else if (input.id === "riskMemo") state.riskMemo = input.value;
+    else if (input.dataset.raceKey) {
+      state.raceConditions[input.dataset.raceKey] = readRaceCondition(input, input.value);
+    } else return;
+    renderRaceAnalysis();
+  });
+
+  racePanel.addEventListener("change", event => {
+    const input = event.target;
+    if (input.name === "raceCharacter" || input.name === "paceScenario") state[input.name] = input.value;
+    else if (input.dataset.risk) {
+      const key = input.dataset.risk;
+      state.riskTriggers = input.checked ? [...state.riskTriggers, key] : state.riskTriggers.filter(risk => risk !== key);
+    } else return;
+    renderRaceAnalysis();
+  });
+
+  racePanel.addEventListener("click", event => {
+    const button = event.target.closest("[data-clear-race]");
+    if (!button) return;
+    const field = button.dataset.clearRace;
+    state[field] = null;
+    racePanel.querySelectorAll(`input[name="${field}"]`).forEach(input => { input.checked = false; });
+    renderRaceAnalysis();
+  });
+
+  document.getElementById("btnCopyRaceContext").addEventListener("click", () => {
+    const summary = raceContextSummary().map(([label, value]) => `${label}　${value}`).join("\n");
+    copyText(summary, "根拠メモ用の要約をコピーしました");
+  });
+
+  function planWinRedistribution(allocation, presetTargets = null) {
+    if (allocation.problem) return { error: allocation.problem };
+    const { rows, floorTotal } = allocation;
+    const desired = presetTargets || rows.map(row => row.requested);
+    const freeUnits = (100 - floorTotal) * 100;
+    let weights = rows.map((row, i) => Math.max(0, desired[i] - row.floor));
+    if (freeUnits > 0 && sumValues(weights) === 0) {
+      const hasUnlocked = rows.some(row => row.floor === 0);
+      weights = rows.map(row => hasUnlocked && row.floor > 0 ? 0 : 1);
+    }
+
+    const distributed = distributeUnits(weights, freeUnits, state.horses);
+    const wins = rows.map((row, i) => (row.floor * 100 + distributed[i]) / 100);
+    const adjustments = rows.map((row, i) => {
+      if (row.floor > 0 && wins[i] === row.floor && desired[i] < row.floor) {
+        return presetTargets ? desired[i] - row.base : state.horses[i].adjustDelta;
+      }
+      return wins[i] - row.base;
+    });
+    return { wins, adjustments };
+  }
+
+  function applyWinRedistribution(plan) {
+    state.horses.forEach((horse, i) => { horse.adjustDelta = plan.adjustments[i]; });
   }
 
   function normalizeWinPct() {
-    if (!state.horses.length) return;
-    const sum = getTotalWinPct();
-    if (sum <= 0) {
-      const even = Math.floor((100 / state.horses.length) * 2) / 2;
-      state.horses.forEach(h => { h.winPct = even; });
-    } else {
-      state.horses.forEach(h => {
-        h.winPct = Math.round(((Number(h.winPct) || 0) / sum * 100) * 2) / 2;
-      });
-    }
-    let diffTenths = Math.round((100 - getTotalWinPct()) * 10);
-    let idx = 0;
-    while (diffTenths !== 0 && state.horses.length > 0) {
-      const step = diffTenths > 0 ? 0.5 : -0.5;
-      const cur = Number(state.horses[idx].winPct) || 0;
-      if (cur + step >= 0) {
-        state.horses[idx].winPct = Math.round((cur + step) * 10) / 10;
-        diffTenths = Math.round((100 - getTotalWinPct()) * 10);
-      }
-      idx = (idx + 1) % state.horses.length;
-      if (idx === 0 && Math.abs(diffTenths) > 50) break;
-    }
+    const plan = planWinRedistribution(computeWinAllocation(state.horses, state.floorLockEnabled));
+    if (!plan.error) applyWinRedistribution(plan);
+    return plan.error || "";
   }
 
-  // イベント委譲（勝率・印・オッズ・タグ）
-  document.getElementById("horseList").addEventListener("click", e => {
-    const markBtn = e.target.closest(".mark-btn");
-    if (markBtn) {
-      const idx = Number(markBtn.dataset.idx);
-      state.horses[idx].mark = markBtn.dataset.mark;
-      renderAll();
-      return;
+  function previewPresetWeights(preset) {
+    const allocation = computeWinAllocation(state.horses, state.floorLockEnabled);
+    const counts = {};
+    state.horses.forEach(horse => { counts[horse.mark] = (counts[horse.mark] || 0) + 1; });
+    const weights = state.horses.map(horse => {
+      const base = preset.weights[horse.mark] ?? 2;
+      return ["△", "☆", "✓"].includes(horse.mark)
+        ? Math.max(0, base / Math.max(1, counts[horse.mark] / 2)) : base;
+    });
+    const sum = sumValues(weights);
+    const plan = allocation.problem ? { error: allocation.problem }
+      : sum > 0 ? planWinRedistribution(allocation, weights.map(w => w / sum * 100))
+      : { error: "印に正の配分が設定されている馬がいません。" };
+    const preview = document.getElementById("presetPreview");
+    const confirm = document.getElementById("btnConfirmPreset");
+    confirm.disabled = Boolean(plan.error);
+    if (plan.error) {
+      preview.textContent = plan.error;
+    } else {
+      preview.innerHTML = `<strong>${escapeHtml(preset.name)}</strong><ul class="paste-preview-list">${
+        state.horses.map((horse, i) => `<li>${horse.num}番 ${escapeHtml(horse.name)}　
+          ${percent(shownEffective(allocation, i))} → <strong>${percent(plan.wins[i])}</strong></li>`).join("")
+      }</ul>`;
     }
+    const modal = document.getElementById("presetPreviewModal");
+    modal.classList.add("open");
+    confirm.onclick = () => {
+      if (plan.error) return;
+      state.preset = preset.id;
+      applyWinRedistribution(plan);
+      modal.classList.remove("open");
+      refreshWinAllocation();
+      renderSettings();
+      showToast(preset.name + " を適用しました");
+    };
+  }
 
-    const stepBtn = e.target.closest(".step-btn");
-    if (stepBtn) {
-      const idx = Number(stepBtn.dataset.idx);
-      const delta = Number(stepBtn.dataset.delta);
-      const nextVal = Math.max(0, Math.min(100, (Number(state.horses[idx].winPct) || 0) + delta));
-      state.horses[idx].winPct = Math.round(nextVal * 10) / 10;
-      renderAll();
-      return;
-    }
-
-    const tagBtn = e.target.closest(".tag-btn");
-    if (tagBtn) {
-      const idx = Number(tagBtn.dataset.idx);
-      const tag = tagBtn.dataset.tag;
-      const tags = state.horses[idx].tags || [];
-      if (tags.includes(tag)) {
-        state.horses[idx].tags = tags.filter(t => t !== tag);
-      } else {
-        state.horses[idx].tags = [...tags, tag];
-      }
-      renderAll();
-      return;
-    }
-
-    const helpBtn = e.target.closest("[data-help]");
-    if (helpBtn) {
-      openHelp(helpBtn.dataset.help);
-    }
+  document.getElementById("btnCancelPreset").addEventListener("click", () => {
+    document.getElementById("presetPreviewModal").classList.remove("open");
   });
 
-  document.getElementById("horseList").addEventListener("change", e => {
-    const oddsInput = e.target.closest(".odds-input");
-    if (oddsInput) {
-      const idx = Number(oddsInput.dataset.idx);
-      const val = Math.max(1.0, Number(oddsInput.value) || 1.0);
-      state.horses[idx].odds = val;
-      const hist = Array.isArray(state.horses[idx].oddsHistory) ? [...state.horses[idx].oddsHistory] : [val];
-      if (hist.length === 0) hist.push(val);
-      else hist[hist.length - 1] = val;
-      state.horses[idx].oddsHistory = hist;
-      renderAll();
+  function updateCurrentOdds(horse, odds) {
+    horse.odds = odds;
+    if (odds === null) return;
+    if (horse.oddsHistory.length) horse.oddsHistory[horse.oddsHistory.length - 1] = odds;
+    else horse.oddsHistory.push(odds);
+  }
+
+  const horsePanel = document.getElementById("panel-horses");
+  horsePanel.addEventListener("click", event => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.dataset.help) {
+      openHelp(button.dataset.help);
       return;
     }
-
-    const winInput = e.target.closest(".win-input");
-    if (winInput) {
-      const idx = Number(winInput.dataset.idx);
-      const val = Math.max(0, Math.min(100, Number(winInput.value) || 0));
-      state.horses[idx].winPct = Math.round(val * 10) / 10;
-      renderAll();
+    const view = button.closest("[data-horse-row]");
+    if (!view) return;
+    const horse = state.horses[Number(view.dataset.horseRow)];
+    if (button.dataset.step) {
+      horse.adjustDelta = readDelta((horse.adjustDelta ?? 0) + Number(button.dataset.step));
+    } else if (button.dataset.mark) {
+      horse.mark = button.dataset.mark;
+      view.querySelectorAll(".mark-btn").forEach(btn => {
+        const selected = btn.dataset.mark === horse.mark;
+        btn.classList.toggle("active", selected);
+        btn.setAttribute("aria-pressed", String(selected));
+      });
+    } else if (button.dataset.tag) {
+      const tag = button.dataset.tag;
+      const selected = !horse.tags.includes(tag);
+      horse.tags = selected ? [...horse.tags, tag] : horse.tags.filter(t => t !== tag);
+      button.classList.toggle("active", selected);
+      button.classList.toggle("warn-tag", selected && TAGS.some(t => t.key === tag && t.warn));
+      button.setAttribute("aria-pressed", String(selected));
+    } else {
+      return;
     }
+    refreshWinAllocation();
+  });
+
+  horsePanel.addEventListener("input", event => {
+    const input = event.target;
+    const view = input.closest("[data-horse-row]");
+    if (!view) return;
+    const i = Number(view.dataset.horseRow);
+    const horse = state.horses[i];
+    if (input.dataset.field === "odds") horse.odds = readOdds(input.value);
+    else if (input.dataset.field === "adjustDelta") horse.adjustDelta = readDelta(input.value);
+    else if (input.dataset.field === "initialOdds") {
+      horse.initialOdds = readOdds(input.value);
+      const invalid = horse.initialOdds === null && (input.value !== "" || input.validity.badInput);
+      if (invalid) input.setAttribute("aria-invalid", "true");
+      else input.removeAttribute("aria-invalid");
+      view.querySelector('[data-value="initialOddsError"]').hidden = !invalid;
+    } else if (input.dataset.field === "initialOddsTime") {
+      horse.initialOddsTime = input.value;
+    } else if (input.dataset.field === "reason") {
+      horse.reason = input.value;
+      horsePanel.querySelectorAll(`[data-horse-row="${i}"] [data-field="reason"]`).forEach(editor => {
+        if (editor !== input) editor.value = horse.reason;
+      });
+      return;
+    } else {
+      return;
+    }
+    refreshWinAllocation();
+  });
+
+  horsePanel.addEventListener("change", event => {
+    const input = event.target;
+    if (input.id === "floorLockEnabled") {
+      state.floorLockEnabled = input.checked;
+      refreshWinAllocation();
+      return;
+    }
+    const view = input.closest("[data-horse-row]");
+    if (!view) return;
+    const horse = state.horses[Number(view.dataset.horseRow)];
+    if (input.dataset.field === "odds") {
+      updateCurrentOdds(horse, readOdds(input.value));
+      renderDriftDashboard();
+    } else if (input.dataset.field === "strengthFlag" || input.dataset.field === "floorLock") {
+      horse[input.dataset.field] = input.checked;
+    } else {
+      return;
+    }
+    refreshWinAllocation();
+  });
+
+  horsePanel.addEventListener("focusout", event => {
+    const input = event.target;
+    if (input.dataset.field !== "adjustDelta") return;
+    const view = input.closest("[data-horse-row]");
+    const delta = state.horses[Number(view.dataset.horseRow)].adjustDelta;
+    if (Number.isFinite(delta)) input.value = signedDecimal(delta);
   });
 
   // タブ切り替え
@@ -2401,20 +3524,24 @@
       const tab = btn.dataset.tab;
       document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
       document.querySelectorAll(".tab-panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + tab));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo(0, 0);
     });
   });
 
   document.getElementById("btnNormalize").addEventListener("click", () => {
-    normalizeWinPct();
-    renderAll();
-    showToast("合計を100.0%に揃えたで");
+    const error = normalizeWinPct();
+    refreshWinAllocation();
+    if (error) {
+      document.getElementById("allocationError").textContent = error;
+      showToast(error);
+    } else {
+      showToast("増減調整を更新し、合計を100.00%に揃えました");
+    }
   });
 
   document.getElementById("btnApplyMarks").addEventListener("click", () => {
-    applyPresetWeights();
-    renderAll();
-    showToast("印に合わせて勝率を自動配分したで");
+    const preset = customSlots.find(slot => slot.id === state.preset) || PRESETS[state.preset];
+    previewPresetWeights(preset);
   });
 
   // 買い目テキストコピー
@@ -2423,13 +3550,14 @@
       showToast("コピーできる買い目が0点やで");
       return;
     }
-    const typeName = BET_TYPE_LABELS[state.betType] || state.betType;
+    const typeName = BET_TYPE_LABELS[state.betType];
+    const isWin = state.betType === "win";
     const totalStake = lastAllocatedBets.reduce((s, x) => s + x.stake, 0);
     const lines = [
       `【TRICK LOGIC 抽出｜${typeName}】${state.raceTitle}`,
       `条件：EV ${Number(state.minEv).toFixed(2)}以上 / 的中率 ${Number(state.minHit).toFixed(1)}%以上 / 計${totalStake.toLocaleString()}円`,
       ...lastAllocatedBets.map((it, i) =>
-        `#${i + 1} ${it.label}｜EV ${it.ev.toFixed(2)}｜目安${it.oddsEst.toFixed(1)}倍｜${it.stake.toLocaleString()}円`
+        `#${i + 1} ${it.label}｜${isWin ? "単勝EV" : "概算EV"} ${it.ev.toFixed(2)}｜${isWin ? "単勝" : "推定"}オッズ ${isWin ? it.oddsEst : it.oddsEst.toFixed(1)}倍｜${it.stake.toLocaleString()}円`
       )
     ];
     copyText(lines.join("\n"), "買い目リストをコピーしたで");
@@ -2496,98 +3624,291 @@
 
   // レース読込モーダル
   const importModal = document.getElementById("importModal");
+  function selectImportTab(sub) {
+    document.querySelectorAll(".subtab-btn").forEach(b => b.classList.toggle("active", b.dataset.subtab === sub));
+    ["paste", "code", "manual"].forEach(id => {
+      document.getElementById("subtab-" + id).style.display = id === sub ? "block" : "none";
+    });
+    if (sub === "manual") renderManualRows();
+  }
+
   document.getElementById("btnOpenImport").addEventListener("click", () => {
+    document.getElementById("pasteFormat").value = "auto";
+    manualDraft = null;
+    selectImportTab("paste");
     parsePasteText();
-    renderManualRows();
     importModal.classList.add("open");
+  });
+  document.getElementById("btnOpenAiPaste").addEventListener("click", () => {
+    document.getElementById("pasteFormat").value = "allocation";
+    document.getElementById("pasteMode").value = "update";
+    selectImportTab("paste");
+    parsePasteText();
+    importModal.classList.add("open");
+    document.getElementById("pasteInput").focus();
   });
   document.getElementById("btnCloseImport").addEventListener("click", () => {
     importModal.classList.remove("open");
   });
 
   document.querySelectorAll(".subtab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const sub = btn.dataset.subtab;
-      document.querySelectorAll(".subtab-btn").forEach(b => b.classList.toggle("active", b.dataset.subtab === sub));
-      ["paste", "code", "manual"].forEach(id => {
-        document.getElementById("subtab-" + id).style.display = (id === sub) ? "block" : "none";
-      });
-      if (sub === "manual") renderManualRows();
-    });
+    btn.addEventListener("click", () => selectImportTab(btn.dataset.subtab));
   });
 
-  let parsedPasteHorses = [];
-  let parsedPasteTimestamps = null;
+  function readHorseNum(value) {
+    const stripped = String(value ?? "").normalize("NFKC").replace(/[【\[\(】\]\)]/g, "").trim();
+    if (!/^\d+$/.test(stripped)) return null;
+    const num = Number(stripped);
+    return num >= 1 && num <= MAX_HORSES ? num : null;
+  }
+
+  function canonicalHorseName(name) {
+    return name.normalize("NFKC").replace(/\s+/gu, "").toLowerCase();
+  }
+
+  function splitMarkdownRow(line) {
+    const text = line.trim();
+    const cells = [""];
+    let hasDelimiter = false;
+    let trailingDelimiter = false;
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (ch === "\\" && (text[i + 1] === "|" || text[i + 1] === "\\")) {
+        cells[cells.length - 1] += text[++i];
+        trailingDelimiter = false;
+      } else if (ch === "|") {
+        cells.push("");
+        hasDelimiter = true;
+        trailingDelimiter = true;
+      } else {
+        cells[cells.length - 1] += ch;
+        trailingDelimiter = false;
+      }
+    }
+    if (!hasDelimiter) return null;
+    if (text.startsWith("|")) cells.shift();
+    if (trailingDelimiter) cells.pop();
+    return cells.map(cell => cell.trim());
+  }
+
+  function allocationCells(line) {
+    return line.includes("\t") ? line.split("\t") : splitMarkdownRow(line);
+  }
+
+  function isAllocationHeader(cells) {
+    const first = cells[0]?.normalize("NFKC").replace(/[*_`\s]/g, "") || "";
+    return /^(馬番|馬番号|番号|horse(?:number|no\.?)|num|no\.?)$/i.test(first);
+  }
+
+  function isAllocationSummary(cells) {
+    const first = cells[0]?.normalize("NFKC").replace(/[*_`\s]/g, "") || "";
+    return /^(計|合計|総計|全\d+頭)(?:[(:（：].*)?$/.test(first)
+      || (!first && /^(計|合計|総計|全\d+頭)$/.test(cells[1]?.normalize("NFKC").trim() || ""));
+  }
+
+  function looksLikeAllocation(lines) {
+    const hasTimes = lines.some(({ text }) => /^#\s*TIME\b/i.test(text.trim()));
+    return lines.some(({ text }) => {
+      const cells = allocationCells(text);
+      if (!cells) return false;
+      if (isAllocationHeader(cells) && cells.some(cell => /勝率|増減|EV/i.test(cell))) return true;
+      if (!text.includes("\t")) return cells.length >= 6 || (/^\s*\|/.test(text) && cells.length >= 2);
+      if (cells.length >= 6 && cells.slice(3, 7).some(cell => /[%％]/.test(cell))) return true;
+      return !hasTimes && cells.length >= 9;
+    });
+  }
+
+  function parseAllocationRows(lines) {
+    const rows = [];
+    const errors = [];
+    const seen = new Set();
+    let skipped = 0;
+    for (const { text, line } of lines) {
+      if (/^`{3}/.test(text.trim())) {
+        skipped++;
+        continue;
+      }
+      const cells = allocationCells(text);
+      if (cells && (isAllocationHeader(cells) || isAllocationSummary(cells)
+        || cells.every(cell => /^:?-{3,}:?$/.test(cell.trim())))) {
+        skipped++;
+        continue;
+      }
+      if (!cells || cells.length !== 9) {
+        errors.push(`${line}行目　9列必要です（${cells?.length || 1}列）。`);
+        continue;
+      }
+      const num = readHorseNum(cells[0]);
+      const name = cells[1].trim();
+      const odds = readOdds(cells[2]);
+      const adjustDelta = readDelta(cells[5]);
+      const problems = [];
+      if (num === null) problems.push("馬番が欠落、または範囲外");
+      else if (seen.has(num)) problems.push(`${num}番が重複`);
+      if (num !== null) seen.add(num);
+      if (!name) problems.push("馬名が空欄");
+      if (odds === null) problems.push("単勝オッズが無効（1.0〜999.9倍）");
+      if (adjustDelta === null) problems.push("増減調整が無効（例 +2.50%）");
+      if (problems.length) {
+        errors.push(`${line}行目　${problems.join("、")}。`);
+        continue;
+      }
+      rows.push({ line, num, name, odds, adjustDelta, cells, reason: cells[8].trim() });
+    }
+    return { rows, errors, skipped };
+  }
+
+  function parseOddsRows(lines) {
+    const rows = [];
+    const errors = [];
+    const seen = new Set();
+    let timestamps = [];
+    let skipped = 0;
+    for (const { text, line } of lines) {
+      const trimmed = text.trim();
+      if (/^#\s*TIME\b/i.test(trimmed)) {
+        timestamps = trimmed.replace(/^#\s*TIME\b/i, "").trim().split(/\s+/).filter(Boolean);
+        skipped++;
+        continue;
+      }
+      const parts = trimmed.split(/\s+/);
+      if (!/^[【\[(（]?[0-9０-９]/.test(parts[0])) {
+        skipped++;
+        continue;
+      }
+      const num = readHorseNum(parts[0]);
+      if (num === null || seen.has(num)) {
+        errors.push(num === null ? `${line}行目　馬番が無効です。` : `${line}行目　${num}番が重複しています。`);
+        continue;
+      }
+      seen.add(num);
+      const nameTokens = [];
+      const oddsHistory = [];
+      let invalidOdds = false;
+      for (const token of parts.slice(1)) {
+        const number = readDecimal(token, "倍");
+        if (number !== null && !nameTokens.length) continue; // 馬名の前の人気欄
+        if (number !== null || /^(?:NaN|Infinity|[-−―]+)$/i.test(token)) {
+          const odds = readOdds(token);
+          if (odds === null) invalidOdds = true;
+          else oddsHistory.push(odds);
+        } else if (!oddsHistory.length && !/^(牡|牝|セ)\d$/.test(token)) {
+          nameTokens.push(token);
+        }
+      }
+      if (!nameTokens.length || !oddsHistory.length || invalidOdds) {
+        errors.push(`${line}行目　馬名と有効な単勝オッズ（1.0〜999.9倍）が必要です。`);
+        continue;
+      }
+      rows.push({ line, num, name: nameTokens.join(" "), odds: oddsHistory.at(-1), oddsHistory, adjustDelta: 0, reason: "" });
+    }
+    return { rows, errors, skipped, timestamps };
+  }
+
+  function newRaceHorse(row, i) {
+    const oddsHistory = row.oddsHistory || [row.odds];
+    return {
+      num: row.num, name: row.name, odds: row.odds, oddsHistory,
+      mark: MARKS[Math.min(i, 3)],
+      tags: getDriftStats({ odds: row.odds, oddsHistory }).isRebound ? ["反発"] : [],
+      adjustDelta: row.adjustDelta, reason: row.reason, strengthFlag: false, floorLock: true,
+      initialOdds: null, initialOddsTime: ""
+    };
+  }
+
+  function planPasteImport(raw, format, mode) {
+    const lines = raw.split(/\r?\n/).map((text, i) => ({ text, line: i + 1 })).filter(({ text }) => text.trim());
+    const ai = format === "allocation" || (format === "auto" && looksLikeAllocation(lines));
+    const parsed = ai ? parseAllocationRows(lines) : parseOddsRows(lines);
+    const update = ai && mode === "update";
+    const nextHorses = update ? cloneState(state.horses) : [];
+    const entries = [];
+    const warnings = [];
+    for (const row of parsed.rows) {
+      if (!update) {
+        entries.push({ row, i: nextHorses.length });
+        nextHorses.push(newRaceHorse(row, nextHorses.length));
+        continue;
+      }
+      const i = nextHorses.findIndex(horse => horse.num === row.num);
+      const horse = nextHorses[i];
+      if (!horse) {
+        parsed.errors.push(`${row.line}行目　現レースに${row.num}番（${row.name}）がいません。`);
+        continue;
+      }
+      if (canonicalHorseName(horse.name) !== canonicalHorseName(row.name)) {
+        parsed.errors.push(`${row.line}行目　${row.num}番の馬名不一致（現 ${horse.name} ／ 貼付 ${row.name}）。`);
+        continue;
+      }
+      updateCurrentOdds(horse, row.odds);
+      horse.adjustDelta = row.adjustDelta;
+      horse.reason = row.reason;
+      entries.push({ row, i });
+    }
+
+    const allocation = computeWinAllocation(nextHorses, update && state.floorLockEnabled);
+    if (ai) entries.forEach(({ row, i }) => {
+      const result = allocation.rows[i];
+      const columns = [
+        [3, result.raw, "80÷オッズ", "%"],
+        [4, result.displayMarket, "市場基準勝率", "%"],
+        [6, shownEffective(allocation, i), "勝率配分案", "%"],
+        [7, result.ev, "単勝EV", ""]
+      ];
+      const different = columns.filter(([col, actual, label, suffix]) => {
+        if (!row.cells[col].trim()) return false;
+        const supplied = readDecimal(row.cells[col], suffix);
+        return supplied === null || actual === null || Math.abs(supplied - Number(actual.toFixed(2))) > 0.005 + EPS;
+      }).map(([, actual, label, suffix]) => `${label} ${actual?.toFixed(2) ?? "—"}${actual === null ? "" : suffix}`);
+      if (different.length) warnings.push(`${row.line}行目 ${row.num}番　計算列が不一致。再計算値 ${different.join(" ／ ")}`);
+    });
+    return {
+      ai, update, entries, nextHorses, allocation, warnings,
+      errors: parsed.errors, skipped: parsed.skipped, timestamps: parsed.timestamps || []
+    };
+  }
 
   function parsePasteText() {
     const raw = document.getElementById("pasteInput").value;
-    const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-    const results = [];
-    let detectedTimes = null;
-
-    for (const line of lines) {
-      if (/^#\s*TIME\b/i.test(line)) {
-        const timeTokens = line
-          .replace(/^#\s*TIME\b/i, "")
-          .trim()
-          .split(/\s+/)
-          .filter(Boolean);
-        if (timeTokens.length >= 2) {
-          detectedTimes = timeTokens;
-        }
-        continue;
-      }
-
-      const parts = line.replace(/\t+/g, " ").split(/\s+/).filter(Boolean);
-      if (parts.length < 3) continue;
-
-      const numMatch = parts[0].replace(/[【\[\(（】\]\)）]/g, "");
-      const num = parseInt(numMatch, 10);
-      if (!num || num < 1 || num > 28) continue;
-
-      const numericTokens = [];
-      let nameTokens = [];
-      for (let i = 1; i < parts.length; i++) {
-        const cleaned = parts[i].replace(/倍$/, "");
-        const val = parseFloat(cleaned);
-        if (!Number.isNaN(val) && /^\d+(\.\d+)?$/.test(cleaned) && numericTokens.length === 0 && nameTokens.length === 0) {
-          continue;
-        }
-        if (!Number.isNaN(val) && /^\d+(\.\d+)?$/.test(cleaned) && val >= 1.0 && val <= 999.9 && nameTokens.length > 0) {
-          numericTokens.push(val);
-        } else if (numericTokens.length === 0) {
-          if (!/^(牡|牝|セ)\d$/.test(parts[i]) && !/^\d{2}\.\d$/.test(parts[i])) {
-            nameTokens.push(parts[i]);
-          }
-        }
-      }
-
-      if (!nameTokens.length || !numericTokens.length) continue;
-      const name = nameTokens.join(" ");
-      const oddsHistory = numericTokens;
-      const odds = oddsHistory[oddsHistory.length - 1];
-      results.push({ num, name, odds, oddsHistory });
-    }
-
-    parsedPasteHorses = results;
-    parsedPasteTimestamps = detectedTimes;
+    const format = document.getElementById("pasteFormat").value;
+    const mode = document.getElementById("pasteMode");
+    const plan = planPasteImport(raw, format, mode.value);
+    mode.hidden = !plan.ai;
+    document.getElementById("pasteModeLabel").hidden = !plan.ai;
     const preview = document.getElementById("pastePreview");
-    const applyBtn = document.getElementById("btnApplyPaste");
-
-    if (!results.length) {
-      preview.textContent = "読み取れる行がまだありません（「1 馬名 3.5」のような形で貼ってください）。";
-      applyBtn.disabled = true;
-    } else {
-      const timeInfo = detectedTimes ? `／時刻：${detectedTimes.join(" → ")}` : "";
-      preview.innerHTML = `<strong>${results.length}頭を認識${escapeHtml(timeInfo)}：</strong>` +
-        results.map(r => `${r.num}.${escapeHtml(r.name)}(${r.odds.toFixed(1)}倍${r.oddsHistory.length > 1 ? "・推移" + r.oddsHistory.length + "時点" : ""})`).join(" / ");
-      applyBtn.disabled = false;
+    const apply = document.getElementById("btnApplyPaste");
+    apply.disabled = !plan.entries.length || plan.errors.length > 0;
+    apply.textContent = plan.update ? "一致した馬を更新する" : "全頭を置き換える";
+    if (!raw.trim()) {
+      preview.textContent = "貼り付けると反映内容を確認できます。";
+      return plan;
     }
+    const action = plan.update ? "一致行を更新" : "全頭置き換え（下限ロックOFFで開始）";
+    const stats = `${action}　反映予定 ${plan.entries.length}頭 ／ エラー ${plan.errors.length}件 ／ 計算列の不一致 ${plan.warnings.length}件 ／ スキップ ${plan.skipped}行`;
+    const list = messages => `<ul class="paste-preview-list">${messages.map(message => `<li>${escapeHtml(message)}</li>`).join("")}</ul>`;
+    const entries = plan.entries.map(({ row, i }) => {
+      const calc = plan.allocation.rows[i];
+      const odds = plan.update ? `${state.horses[i].odds ?? "—"} → ${row.odds}倍` : `${row.odds}倍`;
+      const note = row.reason ? ` ／ ${row.reason}` : "";
+      return `${row.num}番 ${row.name}　${odds} ／ 80÷オッズ ${percent(calc.raw)} ／ 市場 ${percent(calc.displayMarket)}`
+        + ` ／ 増減 ${signedDecimal(row.adjustDelta)} pp ／ 配分案 ${percent(shownEffective(plan.allocation, i))} ／ EV ${calc.ev?.toFixed(2) ?? "—"}${note}`;
+    });
+    const noEntries = !entries.length ? "<p>反映できる行がありません。</p>" : "";
+    const blocked = plan.errors.length ? "<p><strong>エラーを直すと反映できます。</strong></p>" : "";
+    preview.innerHTML = `<strong>${stats}</strong>${noEntries}${blocked}`
+      + (plan.errors.length ? list(plan.errors) : "")
+      + (plan.warnings.length ? list(plan.warnings) : "")
+      + (plan.timestamps.length ? `<p>時点 ${escapeHtml(plan.timestamps.join(" → "))}</p>` : "")
+      + (entries.length ? list(entries) : "");
+    return plan;
   }
 
   document.getElementById("pasteInput").addEventListener("input", parsePasteText);
+  document.getElementById("pasteFormat").addEventListener("change", parsePasteText);
+  document.getElementById("pasteMode").addEventListener("change", parsePasteText);
 
   document.getElementById("btnInsertSamplePaste").addEventListener("click", () => {
+    document.getElementById("pasteFormat").value = "odds";
     document.getElementById("pasteInput").value =
 `1 クロワデュノール 2.7 2.8 2.8
 2 オンブズマン 4.5 4.3 4.2
@@ -2603,158 +3924,201 @@
   });
 
   document.getElementById("btnApplyPaste").addEventListener("click", () => {
-    if (!parsedPasteHorses.length) return;
-    if (parsedPasteTimestamps && parsedPasteTimestamps.length >= 2) {
-      state.timestamps = parsedPasteTimestamps;
+    const plan = parsePasteText();
+    if (!plan.entries.length || plan.errors.length) return;
+    state.horses = plan.nextHorses;
+    if (!plan.update) {
+      resetRaceContext("貼り付けたレース");
+      state.floorLockEnabled = false;
+      state.timestamps = plan.timestamps;
+      state.selectedRadarNum = state.horses[0].num;
+      state.selectedDriftNum = state.horses[0].num;
     }
-    const evenPct = Math.round((100 / parsedPasteHorses.length) * 2) / 2;
-    state.horses = parsedPasteHorses.map((r, idx) => {
-      const mark = idx === 0 ? "◎" : (idx === 1 ? "○" : (idx === 2 ? "▲" : "△"));
-      const st = getDriftStats({ odds: r.odds, oddsHistory: r.oddsHistory });
-      const tags = st.isRebound ? ["反発"] : [];
-      return {
-        num: r.num,
-        name: r.name,
-        mark,
-        odds: r.odds,
-        oddsHistory: r.oddsHistory,
-        winPct: evenPct,
-        tags
-      };
-    });
-    normalizeWinPct();
-    state.selectedRadarNum = state.horses[0].num;
-    state.selectedDriftNum = state.horses[0].num;
+    manualDraft = null;
     importModal.classList.remove("open");
     renderAll();
-    showToast(state.horses.length + "頭のデータを反映したで");
+    showToast(`${plan.entries.length}頭のデータを${plan.update ? "更新" : "反映"}しました`);
   });
 
-  // 共有コード読込
-  let decodedShareObj = null;
+  // 共有コード読込とURLハッシュで同じ互換処理を使う。
+  let decodedShareState = null;
 
-  function validateCodeInput() {
-    const raw = document.getElementById("codeInput").value.trim();
-    const preview = document.getElementById("codePreview");
-    const btn = document.getElementById("btnApplyCode");
-
-    let encoded = "";
-    if (raw.includes("#tl=")) {
-      encoded = raw.split("#tl=")[1].split("&")[0];
-    } else if (raw.startsWith("TRICK_LOGIC_SHARE:")) {
-      encoded = raw.replace("TRICK_LOGIC_SHARE:", "").trim();
+  function readSharedState(encoded) {
+    const binary = atob(decodeURIComponent(encoded));
+    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
+    if (!parsed || !Array.isArray(parsed.horses) || parsed.horses.length < 1 || parsed.horses.length > MAX_HORSES) {
+      throw new Error("invalid race");
     }
 
-    if (!encoded) {
-      decodedShareObj = null;
-      preview.textContent = "TRICK_LOGIC_SHARE: または #tl= 付きのURLを貼り付けてください。";
-      btn.disabled = true;
-      return;
-    }
+    const seen = new Set();
+    const horses = parsed.horses.map((h, i) => {
+      if (!h || typeof h !== "object") throw new Error("invalid horse");
+      const num = readHorseNum(h.num) ?? i + 1;
+      if (seen.has(num)) throw new Error("duplicate horse number");
+      seen.add(num);
+      const odds = readOdds(h.odds);
+      const history = Array.isArray(h.oddsHistory) ? h.oddsHistory.map(readOdds).filter(value => value !== null) : [];
+      const horse = {
+        num,
+        name: typeof h.name === "string" && h.name.trim() ? h.name : "馬" + num,
+        odds,
+        oddsHistory: history.length ? history : (odds === null ? [] : [odds]),
+        mark: MARKS.includes(h.mark) ? h.mark : "△",
+        tags: Array.isArray(h.tags) ? h.tags.filter(tag => typeof tag === "string") : [],
+        reason: typeof h.reason === "string" ? h.reason : "",
+        strengthFlag: h.strengthFlag === true,
+        floorLock: h.floorLock !== false,
+        initialOdds: readOdds(h.initialOdds),
+        initialOddsTime: typeof h.initialOddsTime === "string" ? h.initialOddsTime : ""
+      };
+      if (Object.hasOwn(h, "adjustDelta")) horse.adjustDelta = readDelta(h.adjustDelta);
+      else horse.winPct = h.winPct;
+      return horse;
+    });
+    migrateLegacyWinPct(horses);
 
-    try {
-      const jsonStr = decodeURIComponent(escape(atob(encoded)));
-      const parsed = JSON.parse(jsonStr);
-      if (!parsed || !Array.isArray(parsed.horses) || !parsed.horses.length) {
-        throw new Error("invalid");
-      }
-      decodedShareObj = parsed;
-      preview.innerHTML = `<strong>読み込み可能：</strong>${escapeHtml(parsed.raceTitle || "共有レース")}（${parsed.horses.length}頭／予算 ${Number(parsed.budget || 2000).toLocaleString()}円）`;
-      btn.disabled = false;
-    } catch (_) {
-      decodedShareObj = null;
-      preview.textContent = "共有コードの形式を読み取れませんでした。全文がコピーできているか確認してください。";
-      btn.disabled = true;
-    }
+    const defaults = cloneState(INITIAL_STATE);
+    const preset = typeof parsed.preset === "string" && (Object.hasOwn(PRESETS, parsed.preset)
+      || customSlots.some(slot => slot.id === parsed.preset)) ? parsed.preset : defaults.preset;
+    const bias = typeof parsed.bias === "string" && Object.hasOwn(BIASES, parsed.bias) ? parsed.bias : defaults.bias;
+    const betType = typeof parsed.betType === "string" && Object.hasOwn(BET_TYPE_LABELS, parsed.betType) ? parsed.betType : defaults.betType;
+    const stringList = value => Array.isArray(value) ? value.filter(item => typeof item === "string") : [];
+    const minEv = readDecimal(parsed.minEv);
+    const minHit = readDecimal(parsed.minHit);
+    const budget = readDecimal(parsed.budget);
+    return {
+      raceTitle: typeof parsed.raceTitle === "string" ? parsed.raceTitle : "共有レース",
+      timestamps: Array.isArray(parsed.timestamps) ? stringList(parsed.timestamps) : defaults.timestamps,
+      preset,
+      bias,
+      minEv: minEv > 0 ? minEv : defaults.minEv,
+      minHit: minHit !== null && minHit >= 0 ? minHit : defaults.minHit,
+      budget: budget > 0 ? budget : defaults.budget,
+      betType,
+      floorLockEnabled: parsed.floorLockEnabled === true,
+      raceCharacter: typeof parsed.raceCharacter === "string" && Object.hasOwn(RACE_CHARACTERS, parsed.raceCharacter) ? parsed.raceCharacter : null,
+      paceScenario: typeof parsed.paceScenario === "string" && Object.hasOwn(PACE_SCENARIOS, parsed.paceScenario) ? parsed.paceScenario : null,
+      raceConditions: Object.fromEntries(raceInputs.map(input => {
+        const key = input.dataset.raceKey;
+        return [key, readRaceCondition(input, parsed.raceConditions?.[key])];
+      })),
+      riskTriggers: [...new Set(stringList(parsed.riskTriggers).filter(key => Object.hasOwn(RISK_TRIGGERS, key)))],
+      riskMemo: typeof parsed.riskMemo === "string" ? parsed.riskMemo : "",
+      selectedRadarNum: horses.some(h => h.num === parsed.selectedRadarNum) ? parsed.selectedRadarNum : horses[0].num,
+      selectedDriftNum: horses.some(h => h.num === parsed.selectedDriftNum) ? parsed.selectedDriftNum : horses[0].num,
+      horses
+    };
   }
 
-  document.getElementById("codeInput").addEventListener("input", validateCodeInput);
-
-  document.getElementById("btnApplyCode").addEventListener("click", () => {
-    if (!decodedShareObj) return;
-    const isValidPreset = PRESETS[decodedShareObj.preset] || customSlots.some(s => s.id === decodedShareObj.preset);
-    state = {
-      ...cloneState(INITIAL_STATE),
-      raceTitle: decodedShareObj.raceTitle || "共有レース",
-      timestamps: Array.isArray(decodedShareObj.timestamps) && decodedShareObj.timestamps.length ? decodedShareObj.timestamps : DEFAULT_TIMESTAMPS,
-      preset: isValidPreset ? decodedShareObj.preset : "convergence",
-      bias: BIASES[decodedShareObj.bias] ? decodedShareObj.bias : "flat",
-      minEv: Number(decodedShareObj.minEv) || 1.15,
-      minHit: Number(decodedShareObj.minHit) || 0.8,
-      budget: Number(decodedShareObj.budget) || 2000,
-      betType: decodedShareObj.betType || "wide",
-      horses: decodedShareObj.horses.map((h, i) => ({
-        num: Number(h.num) || (i + 1),
-        name: String(h.name || ("馬" + (i + 1))),
-        mark: MARKS.includes(h.mark) ? h.mark : "△",
-        odds: Math.max(1.0, Number(h.odds) || 5.0),
-        oddsHistory: Array.isArray(h.oddsHistory) && h.oddsHistory.length ? h.oddsHistory.map(Number) : [Math.max(1.0, Number(h.odds) || 5.0)],
-        winPct: Math.max(0, Number(h.winPct) || 0),
-        tags: Array.isArray(h.tags) ? h.tags : []
-      }))
-    };
+  function applySharedState(sharedState) {
+    state = sharedState;
     minEvInput.value = state.minEv;
     minEvRange.value = Math.min(3.0, state.minEv);
     minHitInput.value = state.minHit;
     minHitRange.value = Math.min(20, state.minHit);
     document.getElementById("budgetInput").value = state.budget;
+    manualDraft = null;
+  }
+
+  function validateCodeInput() {
+    const raw = document.getElementById("codeInput").value.trim();
+    const preview = document.getElementById("codePreview");
+    const apply = document.getElementById("btnApplyCode");
+    const encoded = raw.match(/#tl=([^&#\s]+)/)?.[1] || raw.match(/^TRICK_LOGIC_SHARE:(\S+)$/)?.[1];
+    decodedShareState = null;
+    apply.disabled = true;
+    if (!encoded) {
+      preview.textContent = "TRICK_LOGIC_SHARE: から始まる共有コード、または #tl= 付きのURLを貼り付けてください。";
+      return;
+    }
+    try {
+      decodedShareState = readSharedState(encoded);
+      const { raceTitle, horses, budget } = decodedShareState;
+      preview.textContent = `全頭を置き換えます。${raceTitle}（${horses.length}頭 ／ 予算 ${budget.toLocaleString()}円）`;
+      apply.disabled = false;
+    } catch (_) {
+      preview.textContent = "共有データを読み取れませんでした。コード全文と馬番の重複を確認してください。";
+    }
+  }
+
+  document.getElementById("codeInput").addEventListener("input", validateCodeInput);
+  document.getElementById("btnApplyCode").addEventListener("click", () => {
+    if (!decodedShareState) return;
+    applySharedState(cloneState(decodedShareState));
     importModal.classList.remove("open");
     renderAll();
-    showToast("共有データを読み込んだで");
+    showToast("共有データを読み込みました");
   });
 
   // カンタン手入力
-  let manualDraft = [];
+  let manualDraft = null;
 
   function renderManualRows() {
-    if (!manualDraft.length) {
-      manualDraft = state.horses.map(h => ({ num: h.num, name: h.name, odds: h.odds }));
+    if (manualDraft === null) {
+      manualDraft = state.horses.map(h => ({ originalNum: h.num, num: h.num, name: h.name, odds: h.odds ?? "" }));
     }
     const container = document.getElementById("manualRows");
-    if (!manualDraft.length) {
-      container.innerHTML = `<p class="card-desc">リストが空やで。「＋ 1頭追加」を押して馬を入れてな。</p>`;
-      return;
-    }
-
-    const raws = manualDraft.map(r => (Number(r.odds) > 1 ? 80 / Number(r.odds) : 0));
-    const sum = raws.reduce((a, b) => a + b, 0) || 1;
-
-    container.innerHTML = manualDraft.map((r, i) => {
-      const mkt = ((raws[i] / sum) * 100).toFixed(1);
-      return `
-        <div class="edit-row">
-          <input type="number" class="m-num" data-i="${i}" value="${r.num}" min="1" max="28" aria-label="馬番">
-          <input type="text" class="m-name" data-i="${i}" value="${escapeHtml(r.name)}" placeholder="馬名" aria-label="馬名">
-          <input type="number" class="m-odds" data-i="${i}" value="${r.odds}" step="0.1" min="1.0" max="999.9" aria-label="単勝オッズ">
-          <span class="edit-mkt-cell">基準 ${mkt}%</span>
-          <button type="button" class="btn-secondary m-del" data-i="${i}" aria-label="削除">✕</button>
-        </div>
-      `;
-    }).join("");
+    container.innerHTML = manualDraft.length ? manualDraft.map((row, i) => `
+      <div class="edit-row">
+        <input type="number" class="m-num" data-i="${i}" data-manual-field="num" value="${escapeHtml(row.num)}" min="1" max="${MAX_HORSES}" aria-label="馬番">
+        <input type="text" class="m-name" data-i="${i}" data-manual-field="name" value="${escapeHtml(row.name)}" placeholder="馬名" aria-label="馬名">
+        <input type="number" class="m-odds" data-i="${i}" data-manual-field="odds" value="${escapeHtml(row.odds)}" step="any" min="${MIN_ODDS}" max="${MAX_ODDS}" aria-label="単勝オッズ">
+        <span class="edit-mkt-cell" data-manual-market="${i}"></span>
+        <button type="button" class="btn-secondary m-del" data-i="${i}" aria-label="削除">✕</button>
+      </div>
+    `).join("") : `<p class="card-desc">「＋ 1頭追加」で出走馬を入力できます。</p>`;
+    validateManualRows();
   }
 
-  document.getElementById("manualRows").addEventListener("input", e => {
-    const i = Number(e.target.dataset.i);
-    if (Number.isNaN(i) || !manualDraft[i]) return;
-    if (e.target.classList.contains("m-num")) manualDraft[i].num = Number(e.target.value) || (i + 1);
-    if (e.target.classList.contains("m-name")) manualDraft[i].name = e.target.value;
-    if (e.target.classList.contains("m-odds")) {
-      manualDraft[i].odds = Math.max(1.0, Number(e.target.value) || 1.0);
-      renderManualRows();
-    }
+  function validateManualRows() {
+    const seen = new Set();
+    const problems = [];
+    if (!manualDraft.length) problems.push("出走馬を1頭以上入力してください。");
+    const rows = manualDraft.map((row, i) => {
+      const num = readHorseNum(row.num);
+      const odds = readOdds(row.odds);
+      const name = row.name.trim();
+      if (num === null) problems.push(`${i + 1}行目の馬番を確認`);
+      else if (seen.has(num)) problems.push(`${num}番が重複`);
+      seen.add(num);
+      if (odds === null) problems.push(`${i + 1}行目のオッズを確認（1.0〜999.9倍）`);
+      if (!name) problems.push(`${i + 1}行目の馬名を入力`);
+      return { ...row, num, odds, name };
+    });
+    const market = computeMarketProbs(rows);
+    document.querySelectorAll("[data-manual-market]").forEach(el => {
+      const i = Number(el.dataset.manualMarket);
+      el.textContent = rows[i].odds === null ? "基準 —" : "基準 " + percent(market.displayUnits[i] / 100);
+    });
+    document.getElementById("manualErrors").textContent = problems.join(" ／ ");
+    document.getElementById("btnApplyManual").disabled = problems.length > 0;
+    return problems.length ? null : rows;
+  }
+
+  document.getElementById("manualRows").addEventListener("input", event => {
+    const input = event.target;
+    const field = input.dataset.manualField;
+    if (!field) return;
+    manualDraft[Number(input.dataset.i)][field] = input.value;
+    validateManualRows();
   });
 
-  document.getElementById("manualRows").addEventListener("click", e => {
-    const delBtn = e.target.closest(".m-del");
-    if (!delBtn) return;
-    const i = Number(delBtn.dataset.i);
-    manualDraft.splice(i, 1);
+  document.getElementById("manualRows").addEventListener("click", event => {
+    const del = event.target.closest(".m-del");
+    if (!del) return;
+    manualDraft.splice(Number(del.dataset.i), 1);
     renderManualRows();
   });
 
   document.getElementById("btnAddManualRow").addEventListener("click", () => {
-    const nextNum = manualDraft.length ? Math.max(...manualDraft.map(r => Number(r.num) || 0)) + 1 : 1;
-    manualDraft.push({ num: nextNum, name: "", odds: 10.0 });
+    const used = new Set(manualDraft.map(row => readHorseNum(row.num)));
+    const next = Array.from({ length: MAX_HORSES }, (_, i) => i + 1).find(num => !used.has(num));
+    if (!next || manualDraft.length >= MAX_HORSES) {
+      showToast(`出走馬は${MAX_HORSES}頭まで入力できます`);
+      return;
+    }
+    manualDraft.push({ num: next, name: "", odds: 10 });
     renderManualRows();
   });
 
@@ -2764,44 +4128,41 @@
   });
 
   document.getElementById("btnApplyManual").addEventListener("click", () => {
-    const valid = manualDraft.filter(r => r.name.trim() !== "");
-    if (!valid.length) {
-      showToast("馬名を1頭以上入れてな");
-      return;
+    const rows = validateManualRows();
+    if (!rows) return;
+    const keepsRace = rows.some(row => row.originalNum !== undefined);
+    const before = state.horses;
+    state.horses = rows.map((row, i) => {
+      const original = before.find(horse => horse.num === row.originalNum);
+      if (!original) return newRaceHorse({ ...row, adjustDelta: 0, reason: "" }, i);
+      const horse = { ...cloneState(original), num: row.num, name: row.name };
+      updateCurrentOdds(horse, row.odds);
+      return horse;
+    });
+    if (!keepsRace) {
+      resetRaceContext("手入力レース");
+      state.floorLockEnabled = false;
+      state.timestamps = [];
     }
-    const evenPct = Math.round((100 / valid.length) * 2) / 2;
-    state.horses = valid.map((r, i) => ({
-      num: Number(r.num) || (i + 1),
-      name: r.name.trim(),
-      mark: i === 0 ? "◎" : (i === 1 ? "○" : "△"),
-      odds: Math.max(1.0, Number(r.odds) || 1.0),
-      oddsHistory: [Math.max(1.0, Number(r.odds) || 1.0)],
-      winPct: evenPct,
-      tags: []
-    }));
-    normalizeWinPct();
     state.selectedRadarNum = state.horses[0].num;
     state.selectedDriftNum = state.horses[0].num;
+    manualDraft = null;
     importModal.classList.remove("open");
     renderAll();
-    showToast("手入力データを反映したで");
+    showToast("手入力データを反映しました");
   });
 
   // シェアモーダル
   const shareModal = document.getElementById("shareModal");
   document.getElementById("btnOpenShare").addEventListener("click", () => {
+    const allocation = computeWinAllocation(state.horses, state.floorLockEnabled);
     const payload = {
-      raceTitle: state.raceTitle,
-      timestamps: state.timestamps,
-      preset: state.preset,
-      bias: state.bias,
-      minEv: state.minEv,
-      minHit: state.minHit,
-      budget: state.budget,
-      betType: state.betType,
-      horses: state.horses
+      ...state,
+      schemaVersion: 2,
+      horses: state.horses.map((horse, i) => ({ ...horse, winPct: allocation.rows[i].effective }))
     };
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    const bytes = new TextEncoder().encode(JSON.stringify(payload));
+    const encoded = btoa(Array.from(bytes, byte => String.fromCharCode(byte)).join(""));
     const baseUrl = window.location.href.split("#")[0];
     const shareUrl = baseUrl + "#tl=" + encoded;
     const shareCode = "TRICK_LOGIC_SHARE:" + encoded;
@@ -2854,32 +4215,22 @@
 
   // URLハッシュ（#tl=...）起動時復元
   function loadFromHash() {
-    const h = window.location.hash || "";
-    if (!h.startsWith("#tl=")) return;
+    const encoded = window.location.hash.match(/^#tl=([^&#]+)/)?.[1];
+    if (!encoded) return;
     try {
-      const encoded = h.slice(4);
-      const parsed = JSON.parse(decodeURIComponent(escape(atob(encoded))));
-      if (parsed && Array.isArray(parsed.horses) && parsed.horses.length) {
-        state = {
-          ...cloneState(INITIAL_STATE),
-          ...parsed,
-          horses: parsed.horses
-        };
-        minEvInput.value = state.minEv;
-        minEvRange.value = Math.min(3.0, state.minEv);
-        minHitInput.value = state.minHit;
-        minHitRange.value = Math.min(20, state.minHit);
-        document.getElementById("budgetInput").value = state.budget;
-      }
-    } catch (_) {}
+      applySharedState(readSharedState(encoded));
+    } catch (_) {
+      showToast("共有URLを読み取れませんでした");
+    }
   }
 
   function escapeHtml(str) {
-    return String(str || "")
+    return String(str ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function shortenName(name) {
@@ -2887,6 +4238,7 @@
     return s.length > 6 ? s.slice(0, 6) : s;
   }
 
+  setupRaceChoices();
   loadFromHash();
   renderAll();
 })();
